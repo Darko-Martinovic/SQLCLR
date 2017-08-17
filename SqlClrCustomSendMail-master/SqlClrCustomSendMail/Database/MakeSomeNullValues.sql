@@ -98,15 +98,31 @@ ALTER SCHEMA EMAIL TRANSFER dbo.CustomSendMailHelp;
 
 
 --Transfer function
-IF EXISTS ( SELECT * 
-			FROM   sysobjects 
-			WHERE  id = object_id(N'[EMAIL].[CleanMemory]') 
-				   and type = N'FS' )
+IF EXISTS (SELECT
+		*
+	FROM sysobjects
+	WHERE id = OBJECT_ID(N'[EMAIL].[CleanMemory]')
+	AND type = N'FS')
 BEGIN
-	DROP FUNCTION [EMAIL].[CleanMemory]
+DROP FUNCTION [EMAIL].[CleanMemory]
 END
 
 ALTER SCHEMA EMAIL TRANSFER dbo.CleanMemory;
+
+
+
+--Transfer function QueryToHtml
+IF EXISTS (SELECT
+		*
+	FROM sysobjects
+	WHERE id = OBJECT_ID(N'[EMAIL].[QueryToHtml]')
+	AND type = N'FS')
+BEGIN
+DROP FUNCTION [EMAIL].[QueryToHtml]
+END
+
+ALTER SCHEMA EMAIL TRANSFER dbo.QueryToHtml;
+
 
 
 
