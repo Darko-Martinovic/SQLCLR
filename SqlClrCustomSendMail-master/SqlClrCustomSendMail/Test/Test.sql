@@ -5,7 +5,7 @@ EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 						  ,@mailBody = N'Outlook';
 --Test query to html
 DECLARE @body as nvarchar(max)
-SET @body = EMAIL.QueryToHtml('SELECT * FROM EMAIL.PROFILES', '', 'EMAIL.Profiles', '#', 2, 0, 'ST_BLUE')
+SET @body = EMAIL.QueryToHtml('SELECT * FROM EMAIL.PROFILES', '', 'EMAIL.Profiles', '#', 2, 0, 'ST_SIMPLE')
 EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 						  ,@mailTo = N'darko.martinovic@outlook.com'
 						  ,@mailSubject = N'Test QueryToHtml'
