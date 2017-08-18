@@ -68,7 +68,7 @@ public partial class UserDefinedFunctions
 
             data.Add("@fileAttachments", "Is a semicolon-delimited list of file names to attach to the e-mail message. Files in the list must " +
                 "be specified as absolute paths. The attachments list is of type nvarchar(max). By default, SQLCLR Mail limits file attachments to 1 MB per file");
-            
+
             //Not implemented
             data.Add("@requestReadReceipt", "Request read receipt. Not implemented in sp_send_dbmail");
 
@@ -87,10 +87,21 @@ public partial class UserDefinedFunctions
 
             data.Add("@configName", "Is the name of the configuration. " +
     " Configuration is responsible for protecting system of large file attachements");
-
-
-
-
+        }
+        else if (ProcedureName.ToLower().Equals("email.querytohtml"))
+        {
+            data.Add("@Query", "Query or stored procedure which we will to transform into HTML. Stored procedure always should begin with keyword EXEC.");
+            data.Add("@Params", "Query or stored procedure parametars");
+            data.Add("@Caption", "Table header");
+            data.Add("@Footer", "Table footer. Number of records will be printed when you pass #");
+            data.Add("@Rm", "0-means no rotation,1-auto rotation if number of columns is greater then number of rows, 2-means always rotate");
+            data.Add("@Rco", "Rotate column ordinal. Valid value is for -1 to max column value. If you specify @Rm parametar = 0 @Rco parametar is ignored.");
+            data.Add("@style", "There are 6 predefined styles, namely ST_BLUE, ST_BLACK, ST_BROWN, ST_ROSE,ST_RED and ST_GREEN. You can pass your custom css stylesheet as well.");
+        }
+        else if (ProcedureName.ToLower().Equals("email.concathtml")) //ConCatHtml
+        {
+            data.Add("@mHtml", "Main html string. Should be well formatted. It means should have html, head and body tags.");
+            data.Add("@sHtml", "Html string we want to merge with the main html string");
         }
         else
         {
