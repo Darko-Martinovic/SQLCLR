@@ -4,9 +4,6 @@
 The code written in any .NET language to be incorporated into your SQL Server instance and called from a stored procedure or function
 
 
-#######
-
-
 If you do not want to do anything with the source code, 
 copy the t-sql script from 'Setup' directory to the SSMS. 
 
@@ -20,7 +17,7 @@ Use the encryption program described in the article to fill the profile table.
 #####
 
 
---To send e-mail
+# To send e-mail
 
 
 EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
@@ -29,7 +26,7 @@ EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 						  ,@mailBody = N'Mail body';
 						  
 						  
---To include query result in e-mail body
+# To include query result in e-mail body
 
 
 DECLARE @body as nvarchar(max)
@@ -44,7 +41,7 @@ EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 						  ,@mailBody = @body;
 						  
 						  
---To include multiple query results 
+# To include multiple query results 
 
 
 SET @body = (SELECT
