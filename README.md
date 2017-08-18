@@ -10,18 +10,28 @@ Use the encryption program described in the article to fill the profile table.
 #####
 
 --To send e-mail
+
+
 EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 						  ,@mailTo = N'darko.martinovic@outlook.com'
 						  ,@mailSubject = N'First test'
 						  ,@mailBody = N'Mail body';
+						  
+						  
 --To include query result in e-mail body
+
+
 DECLARE @body as nvarchar(max)
 SET @body = EMAIL.QueryToHtml('SELECT * FROM EMAIL.PROFILES', '', 'EMAIL.Profiles', '#', 2, 0, 'ST_BLUE')
 EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 						  ,@mailTo = N'darko.martinovic@outlook.com'
 						  ,@mailSubject = N'Test QueryToHtml'
 						  ,@mailBody = @body;
+						  
+						  
 --To include multiple query results 
+
+
 SET @body = (SELECT
 		EMAIL.ConCatHtml(@body, (SELECT
 				EMAIL.QueryToHtml('SELECT
