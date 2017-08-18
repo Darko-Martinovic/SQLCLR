@@ -1,6 +1,4 @@
 # SQLCLR
-
-
 The code written in any .NET language to be incorporated into your SQL Server instance and called from a stored procedure or function
 
 
@@ -41,7 +39,7 @@ EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 						  ,@mailBody = @body;
 						  
 						  
-# To include multiple query results 
+# To include multiple query results in e-mail body
 
 
 SET @body = (SELECT
