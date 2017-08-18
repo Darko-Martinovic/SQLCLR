@@ -11,8 +11,10 @@ Similar do with 'DataPath' and 'LogPath'.
 
 
 This script also fills out the table of profiles. 
+
 Use the encryption program described in the article to fill the profile table.
-#####
+
+To clean up environment, use CleanUp script located in 'Test' directory.
 
 
 # To send e-mail
