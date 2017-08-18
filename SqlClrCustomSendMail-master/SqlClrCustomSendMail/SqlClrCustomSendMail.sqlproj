@@ -107,6 +107,7 @@
     <Compile Include="Functions\QueryToHtml.cs" />
     <Compile Include="HtmlSupport\RenderArray.cs" />
     <Compile Include="HtmlSupport\DetermineStyle.cs" />
+    <Compile Include="Functions\ConCatHtml.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Test\Test.sql" />
