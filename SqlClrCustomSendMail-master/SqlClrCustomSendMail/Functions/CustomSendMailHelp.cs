@@ -96,7 +96,7 @@ public partial class UserDefinedFunctions
             data.Add("@Footer", "Table footer. Number of records will be printed when you pass #");
             data.Add("@Rm", "0-means no rotation,1-auto rotation if number of columns is greater then number of rows, 2-means always rotate");
             data.Add("@Rco", "Rotate column ordinal. Valid value is for -1 to max column value. If you specify @Rm parametar = 0 @Rco parametar is ignored.");
-            data.Add("@style", "There are 6 predefined styles, namely ST_BLUE, ST_BLACK, ST_BROWN, ST_ROSE,ST_RED and ST_GREEN. You can pass your custom css stylesheet as well.");
+            data.Add("@style", "There are 7 predefined styles, namely ST_BLUE, ST_BLACK, ST_BROWN, ST_ROSE,ST_RED,ST_GREEN and ST_SIMPLE. You can pass your custom css stylesheet as well.");
         }
         else if (ProcedureName.ToLower().Equals("email.concathtml")) //ConCatHtml
         {

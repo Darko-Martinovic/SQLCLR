@@ -14,6 +14,7 @@ namespace SqlClrCustomSendMail
         const string ST_BROWN = "ST_BROWN";
         const string ST_BLACK = "ST_BLACK";
         public const string ST_BLUE = "ST_BLUE";
+        public const string ST_SIMPLE = "ST_SIMPLE";
         public const string ST_NO_STYLE = "ST_NO_STYLE";
 
 
@@ -525,6 +526,52 @@ namespace SqlClrCustomSendMail
         }
     </style>";
 
+            }
+            else if ( style == ST_SIMPLE)
+            {
+                defaultStyle = @"
+                    <style type='text/css'> 
+                    .datagridST_SIMPLE table {
+                    { 
+                        font-family: verdana,arial,sans-serif;
+                        font-size:11px;
+                        color:#333333; 
+                        border-width: 0.2px;
+                        border-color: #666666;
+                        border-collapse: collapse;
+                    } 
+                    .datagridST_SIMPLE th 
+                    { 
+                        border-width: 0.2px;
+                        padding: 6px;
+                        border-style: dotted;
+                        border-color: #666666;
+                        background-color: #dedede;
+                    } 
+                    .datagridST_SIMPLE td 
+                    { 
+                        border-width: 0.2px;
+                        padding: 6px;
+                        border-style: dotted;
+                        border-color: #666666;
+                        background-color: #ffffff;
+                    } 
+                    .datagridST_SIMPLE thead 
+                    { 
+                        font-weight: bold;
+                        font-family: verdana,arial,sans-serif;
+                        font-size:13px;
+                        text-align: center;
+                        background-color: #dedede;
+                    } 
+                    .datagridST_SIMPLE tfoot 
+                    { 
+                        font-family: verdana,arial,sans-serif;
+                        font-size:11px;
+                        text-align: center;
+                    } 
+                    </style>
+                    ";
             }
             else if (style == ST_NO_STYLE)
             {
