@@ -7,3 +7,30 @@ In that script, replace the phrase 'your database name' with the real name of yo
 Similar do with 'DataPath' and 'LogPath'. 
 This script also fills out the table of profiles. 
 Use the encryption program described in the article to fill the profile table.
+#####
+
+--To send e-mail
+EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
+						  ,@mailTo = N'darko.martinovic@outlook.com'
+						  ,@mailSubject = N'First test'
+						  ,@mailBody = N'Mail body';
+--To include query result in e-mail body
+DECLARE @body as nvarchar(max)
+SET @body = EMAIL.QueryToHtml('SELECT * FROM EMAIL.PROFILES', '', 'EMAIL.Profiles', '#', 2, 0, 'ST_BLUE')
+EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
+						  ,@mailTo = N'darko.martinovic@outlook.com'
+						  ,@mailSubject = N'Test QueryToHtml'
+						  ,@mailBody = @body;
+--To include multiple query results 
+SET @body = (SELECT
+		EMAIL.ConCatHtml(@body, (SELECT
+				EMAIL.QueryToHtml('SELECT
+ *
+FROM EMAIL.Configurations','',
+				'EMAIL.Configuration', '#', 2, 0, 'ST_RED'))
+		));
+
+EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
+						  ,@mailTo = N'darko.martinovic@outlook.com'
+						  ,@mailSubject = N'Test ConCatHtml'
+						  ,@mailBody = @body;
