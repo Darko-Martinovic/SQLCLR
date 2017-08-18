@@ -98,7 +98,7 @@ public partial class UserDefinedFunctions
             data.Add("@Rco", "Rotate column ordinal. Valid value is for -1 to max column value. If you specify @Rm parametar = 0 @Rco parametar is ignored.");
             data.Add("@style", "There are 6 predefined styles, namely ST_BLUE, ST_BLACK, ST_BROWN, ST_ROSE,ST_RED and ST_GREEN. You can pass your custom css stylesheet as well.");
         }
-        else if (ProcedureName.ToLower().Equals("email.querytohtml"))
+        else if (ProcedureName.ToLower().Equals("email.comcathtml"))
         {
             data.Add("@mHtml", "Main html string. Should be well formatted. It means should have html, head and body tags.");
             data.Add("@sHtml", "Html string we want to merge with the main html string");
