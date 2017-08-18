@@ -16,6 +16,37 @@ BEGIN
 	DROP FUNCTION [EMAIL].[CustomSendMailHelp]
 END
 
+--Drop function ConCatHtml
+IF EXISTS (SELECT
+		*
+	FROM sysobjects
+	WHERE id = OBJECT_ID(N'[EMAIL].[ConCatHtml]')
+	AND type = N'FS')
+BEGIN
+	DROP FUNCTION [EMAIL].[ConCatHtml]
+END
+
+--Drop function QueryToHtml
+IF EXISTS (SELECT
+		*
+	FROM sysobjects
+	WHERE id = OBJECT_ID(N'[EMAIL].[QueryToHtml]')
+	AND type = N'FS')
+BEGIN
+DROP FUNCTION [EMAIL].[QueryToHtml]
+END
+
+--Drop function CleanMemory
+IF EXISTS (SELECT
+		*
+	FROM sysobjects
+	WHERE id = OBJECT_ID(N'[EMAIL].[CleanMemory]')
+	AND type = N'FS')
+BEGIN
+DROP FUNCTION [EMAIL].[CleanMemory]
+END
+
+
 --Drop assembly 
 IF  EXISTS ( SELECT * 
 			 FROM sys.assemblies asms 
