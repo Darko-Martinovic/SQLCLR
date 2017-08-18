@@ -124,6 +124,19 @@ END
 ALTER SCHEMA EMAIL TRANSFER dbo.QueryToHtml;
 
 
+--Transfer function ConCatHtml
+IF EXISTS (SELECT
+		*
+	FROM sysobjects
+	WHERE id = OBJECT_ID(N'[EMAIL].[ConCatHtml]')
+	AND type = N'FS')
+BEGIN
+DROP FUNCTION [EMAIL].[ConCatHtml]
+END
+
+ALTER SCHEMA EMAIL TRANSFER dbo.ConCatHtml;
+
+
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
