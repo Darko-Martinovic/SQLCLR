@@ -13,7 +13,7 @@ Use the encryption program described in the article to fill the profile table.
 
 
 EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
-						  ,@mailTo = N'darko.martinovic@outlook.com'
+						  ,@mailTo = N'yourEmail@Email.com'
 						  ,@mailSubject = N'First test'
 						  ,@mailBody = N'Mail body';
 						  
@@ -24,7 +24,7 @@ EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 DECLARE @body as nvarchar(max)
 SET @body = EMAIL.QueryToHtml('SELECT * FROM EMAIL.PROFILES', '', 'EMAIL.Profiles', '#', 2, 0, 'ST_BLUE')
 EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
-						  ,@mailTo = N'darko.martinovic@outlook.com'
+						  ,@mailTo = N'yourEmail@Email.com'
 						  ,@mailSubject = N'Test QueryToHtml'
 						  ,@mailBody = @body;
 						  
@@ -41,6 +41,6 @@ FROM EMAIL.Configurations','',
 		));
 
 EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
-						  ,@mailTo = N'darko.martinovic@outlook.com'
+						  ,@mailTo = N'yourEmail@Email.com'
 						  ,@mailSubject = N'Test ConCatHtml'
 						  ,@mailBody = @body;
