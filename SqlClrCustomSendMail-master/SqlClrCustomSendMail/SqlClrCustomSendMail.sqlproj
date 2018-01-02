@@ -125,7 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="keyPath">
-      <DefaultValue>'D:\VS2017_PROJECTS\SqlClrCustomSendMail\SqlClrCustomSendMail\keySqlClrCustomSendMail.snk'</DefaultValue>
+      <DefaultValue>'D:\GitHub\SqlClr\SQLCLRSendMail\SqlClrCustomSendMail-master\SqlClrCustomSendMail\keySqlClrCustomSendMail.snk'</DefaultValue>
       <Value>$(SqlCmdVar__1)</Value>
     </SqlCmdVariable>
   </ItemGroup>
