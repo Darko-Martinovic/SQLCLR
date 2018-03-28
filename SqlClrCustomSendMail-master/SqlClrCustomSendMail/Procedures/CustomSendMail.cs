@@ -316,12 +316,12 @@ public partial class StoredProcedures
             p = new SysProfile();
             p.builInName = name;
             p.client = new SmtpClient();
-            p.client.UseDefaultCredentials = false;
+            p.client.UseDefaultCredentials = true;
             p.client.Port = 25;
             p.client.Host = "mail.iskon.hr";
             p.client.EnableSsl = false;
             // encrypted credential 
-            p.client.Credentials = new NetworkCredential(wrapper.DecryptData("El+=="), wrapper.DecryptData("=="));
+            //p.client.Credentials = new NetworkCredential(wrapper.DecryptData("El+=="), wrapper.DecryptData("=="));
         }
         else
         {
