@@ -104,11 +104,15 @@ namespace SqlClrCustomSendMail
                             if (dr["Domain"] != DBNull.Value)
                             {
                                 p.defaultDomain = (string)dr["Domain"];
-                                p.client.Credentials = new System.Net.NetworkCredential(wrapper.DecryptData((string)dr["UserName"]), wrapper.DecryptData((string)dr["Password"]), p.defaultDomain);
+                                if (p.client.UseDefaultCredentials == false)
+                                    p.client.Credentials =
+                                        new System.Net.NetworkCredential(wrapper.DecryptData((string)dr["UserName"]), wrapper.DecryptData((string)dr["Password"]), p.defaultDomain);
                                 //                                p.client.Credentials = new System.Net.NetworkCredential((string)dr["UserName"], (string)dr["Password"], p.defaultDomain);
                             }
                             else
-                                p.client.Credentials = new System.Net.NetworkCredential(wrapper.DecryptData((string)dr["UserName"]), wrapper.DecryptData((string)dr["Password"]));
+                                if (p.client.UseDefaultCredentials == false)
+                                    p.client.Credentials = new System.Net.NetworkCredential(wrapper.DecryptData((string)dr["UserName"]), wrapper.DecryptData((string)dr["Password"]));
+
                             p.defaultFromAddress = (string)dr["DefaultFrom"];
                             if (dr["DefaultGroup"] != DBNull.Value)
                                 p.defaultDisplayName = (string)dr["DefaultGroup"];
