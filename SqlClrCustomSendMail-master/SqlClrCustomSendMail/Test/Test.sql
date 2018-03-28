@@ -1,4 +1,10 @@
-﻿--Test sending e-mail
+﻿exec [EMAIL].[CLRSendMail] @profileName = N'simple'
+								  ,@mailTo = N'darko.martinovic@outlook.com'
+								  ,@mailSubject = 'Test annonymous'
+								  ,@mailBody = 'Body contents'
+								  ,@fromAddress = 'pomocniracun27@gmial.com'
+
+--Test sending e-mail
 EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 						  ,@mailTo = N'darko.martinovic@outlook.com'
 						  ,@mailSubject = N'Slanje putem outlooka'

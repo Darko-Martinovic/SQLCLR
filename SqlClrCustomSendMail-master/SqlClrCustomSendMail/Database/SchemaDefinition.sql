@@ -24,8 +24,8 @@ BEGIN
 	,                                 [DefaultCred]   [bit]              NOT NULL DEFAULT 0
 	,                                 [HostName]      [nvarchar](50)     NOT NULL DEFAULT 'smtp.gmail.com'
 	,                                 [Port]          [int]              NOT NULL DEFAULT 587
-	,                                 [UserName]      [nvarchar](200)    NOT NULL 
-	,                                 [Password]      [nvarchar](200)    NOT NULL 
+	,                                 [UserName]      [nvarchar](200)    NULL 
+	,                                 [Password]      [nvarchar](200)    NULL 
 	,                                 [DOMAIN]        [nvarchar](200)    NULL                     --Exchange domain name
 	,                                 [DefaultFrom]   [nvarchar](500)    NOT NULL                 --Default from address
 	,                                 [DefaultGroup]  [nvarchar](100)    NULL                     --Default displayName 
