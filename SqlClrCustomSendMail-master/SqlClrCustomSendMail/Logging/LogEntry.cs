@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 
 namespace SqlClrCustomSendMail
 {
@@ -10,19 +7,16 @@ namespace SqlClrCustomSendMail
 
         public static bool LogItem(string source, string type, string message, string data)
         {
-            bool retvalue = true;
+            var retvalue = true;
 
-            string cmdString = @"INSERT INTO [EMAIL].[MONITORLOG](SOURCE, TYPE,  MESSAGE, DATA)
-                                VALUES (@source, @type, @message, @data)";
 
-            string connString = "context connection=true";
-
-            using (SqlConnection conn = new SqlConnection(connString))
+            using (var conn = new SqlConnection("context connection=true"))
             {
-                using (SqlCommand comm = new SqlCommand())
+                using (var comm = new SqlCommand())
                 {
                     comm.Connection = conn;
-                    comm.CommandText = cmdString;
+                    comm.CommandText = @"INSERT INTO [EMAIL].[MONITORLOG](SOURCE, TYPE,  MESSAGE, DATA)
+                                VALUES (@source, @type, @message, @data)";
                     //comm.Parameters.AddWithValue("@timeStamp", timeStamp);
                     //comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.DateTime;
 

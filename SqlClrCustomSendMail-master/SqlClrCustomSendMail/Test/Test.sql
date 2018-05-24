@@ -1,4 +1,13 @@
-﻿exec [EMAIL].[CLRSendMail] @profileName = N'simple'
+﻿--Test query to html
+DECLARE @body as nvarchar(max)
+SET @body = EMAIL.QueryToHtml('SELECT * FROM sys.databases', '', 'sys.databases', '#', 2, 0, 'StRed')
+EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
+						  ,@mailTo = N'darko.martinovic@outlook.com'
+						  ,@mailSubject = N'Test QueryToHtml'
+						  ,@mailBody = @body;
+
+
+exec [EMAIL].[CLRSendMail] @profileName = N'simple'
 								  ,@mailTo = N'darko.martinovic@outlook.com'
 								  ,@mailSubject = 'Test annonymous'
 								  ,@mailBody = 'Body contents'
@@ -9,13 +18,6 @@ EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 						  ,@mailTo = N'darko.martinovic@outlook.com'
 						  ,@mailSubject = N'Slanje putem outlooka'
 						  ,@mailBody = N'Outlook';
---Test query to html
-DECLARE @body as nvarchar(max)
-SET @body = EMAIL.QueryToHtml('SELECT * FROM EMAIL.PROFILES', '', 'EMAIL.Profiles', '#', 2, 0, 'ST_SIMPLE')
-EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
-						  ,@mailTo = N'darko.martinovic@outlook.com'
-						  ,@mailSubject = N'Test QueryToHtml'
-						  ,@mailBody = @body;
 --Test ConCat Html
 SET @body = (SELECT
 		EMAIL.ConCatHtml(@body, (SELECT

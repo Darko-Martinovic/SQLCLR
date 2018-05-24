@@ -8,11 +8,11 @@ namespace SqlClrCustomSendMail
         public sealed class Simple3Des
         {
 
-            private TripleDESCryptoServiceProvider TripleDes = new TripleDESCryptoServiceProvider();
+            private TripleDESCryptoServiceProvider _tripleDes = new TripleDESCryptoServiceProvider();
             public Simple3Des(string key)
             {
-                TripleDes.Key = TruncateHash(key, TripleDes.KeySize / 8);
-                TripleDes.IV = TruncateHash("", TripleDes.BlockSize / 8);
+                _tripleDes.Key = TruncateHash(key, _tripleDes.KeySize / 8);
+                _tripleDes.IV = TruncateHash("", _tripleDes.BlockSize / 8);
             }
 
             public string DecryptData(string encryptedtext)
@@ -24,7 +24,7 @@ namespace SqlClrCustomSendMail
 
                 System.IO.MemoryStream ms = new System.IO.MemoryStream();
 
-                CryptoStream decStream = new CryptoStream(ms, TripleDes.CreateDecryptor(), System.Security.Cryptography.CryptoStreamMode.Write);
+                CryptoStream decStream = new CryptoStream(ms, _tripleDes.CreateDecryptor(), System.Security.Cryptography.CryptoStreamMode.Write);
 
 
                 decStream.Write(encryptedBytes, 0, encryptedBytes.Length);
@@ -43,7 +43,7 @@ namespace SqlClrCustomSendMail
 
 
                 System.IO.MemoryStream ms = new System.IO.MemoryStream();
-                CryptoStream encStream = new CryptoStream(ms, TripleDes.CreateEncryptor(), System.Security.Cryptography.CryptoStreamMode.Write);
+                CryptoStream encStream = new CryptoStream(ms, _tripleDes.CreateEncryptor(), System.Security.Cryptography.CryptoStreamMode.Write);
 
 
                 encStream.Write(plaintextBytes, 0, plaintextBytes.Length);
@@ -57,7 +57,7 @@ namespace SqlClrCustomSendMail
             private byte[] TruncateHash(string key, int length)
             {
 
-                SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider();
+                var sha1 = new SHA1CryptoServiceProvider();
 
 
                 byte[] keyBytes = System.Text.Encoding.Unicode.GetBytes(key);

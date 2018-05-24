@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SqlClrCustomSendMail
 {
@@ -10,7 +8,7 @@ namespace SqlClrCustomSendMail
         /// <summary>
         /// Maximum file size in bytes. Default 1MB
         /// </summary>
-        public Int32 maxFileSize
+        public Int32 MaxFileSize
         {
             get; set;
         } = 1000000;
@@ -18,18 +16,18 @@ namespace SqlClrCustomSendMail
         /// <summary>
         /// File extension that are not allowed
         /// </summary>
-        public string prohibitedExtension
+        public string ProhibitedExtension
         {
             get; set;
         } = "exe,dll,vbs,js";
-        public eLoggingLevel loggingLevel
+        public ELoggingLevel LoggingLevel
         {
             get; set;
-        } = eLoggingLevel.Minimal;
+        } = ELoggingLevel.Minimal;
         /// <summary>
         /// Do we save e-mails?
         /// </summary>
-        public bool saveEmails
+        public bool SaveEmails
         {
             get; set;
         } = true;
@@ -37,28 +35,28 @@ namespace SqlClrCustomSendMail
         /// <summary>
         /// What is configuration name
         /// </summary>
-        public string name
+        public string Name
         {
             get; set;
         } = null;
         /// <summary>
         /// How we send an e-mail?
         /// </summary>
-        public bool sendAsync
+        public bool SendAsync
         {
             get; set;
         } = true;
         /// <summary>
         /// Do we need piping
         /// </summary>
-        public bool noPiping
+        public bool NoPiping
         {
             get; set;
         } = true;
         /// <summary>
         /// Do we save attachments
         /// </summary>
-        public bool saveAttachments
+        public bool SaveAttachments
         {
             get; set;
         } = true;
@@ -66,7 +64,7 @@ namespace SqlClrCustomSendMail
 
 
     }
-    public enum eLoggingLevel
+    public enum ELoggingLevel
     {
         Minimal = 0,
         Usual = 1,

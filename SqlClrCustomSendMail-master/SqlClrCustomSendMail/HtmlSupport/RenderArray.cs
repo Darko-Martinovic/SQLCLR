@@ -1,20 +1,16 @@
-using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Text;
-using SqlClrCustomSendMail;
 
 namespace SqlClrCustomSendMail
 {
     class RenderArray
     {
-        public static string MakeTable(List<object[]> dt, string caption, string footer, string style, int maxColumn, int maxCounter, int counter, int LastCounter)
+        public static string MakeTable(List<object[]> dt, string caption, string footer, string style, int maxColumn, int maxCounter, int counter, int lastCounter)
         {
 
-            StringBuilder html = new StringBuilder();
-            bool isCustomStyle = false;
-            if (style.Contains("<style type"))
-                isCustomStyle = true;
+            var html = new StringBuilder();
+            var isCustomStyle = style.Contains("<style type");
+
             if (counter.Equals(0))
             {
                 html.Append("<html><head><meta charset='utf-8'/>");
@@ -24,13 +20,13 @@ namespace SqlClrCustomSendMail
             //???
             if (isCustomStyle == false)
             {
-                string appendName = style.Equals(string.Empty) ? DetermineStyle.ST_BLUE : style;
+                var appendName = style.Equals(string.Empty) ? DetermineStyle.StBlue : style;
                 html.Append("<div class='datagrid" + appendName + "'>");
                 html.Append("<table>");
             }
             else
             {
-                string styleName = DetermineStyle.DetermineStyleName(style);
+                var styleName = DetermineStyle.DetermineStyleName(style);
                 html.Append("<table class='" + styleName + "'>");
             }
             if (caption != null && caption.Trim() != "")
@@ -43,7 +39,7 @@ namespace SqlClrCustomSendMail
 
 
             //Apply column headers
-            for (int i1 = 0; i1 < maxColumn; i1++)
+            for (var i1 = 0; i1 < maxColumn; i1++)
             {
                 html.Append("<th>");
                 html.Append(dt[0][i1].ToString());
@@ -56,11 +52,11 @@ namespace SqlClrCustomSendMail
 
 
             //int i = 0;
-            for (int i1 = 1; i1 < maxCounter; i1++)
+            for (var i1 = 1; i1 < maxCounter; i1++)
             {
                 html.Append("<tr>");
 
-                for (int i2 = 0; i2 < maxColumn; i2++)
+                for (var i2 = 0; i2 < maxColumn; i2++)
                 {
                     html.Append("<td>");
                     if (dt[i1][i2].ToString().Trim().Contains("<"))
@@ -85,16 +81,16 @@ namespace SqlClrCustomSendMail
             string customFooter = footer;
             if (footer == "#")
             {
-                customFooter = "Total records : " + maxCounter.ToString();
+                customFooter = "Total records : " + maxCounter;
             }
-            html.Append("<tfoot><tr><td colspan='" + maxColumn.ToString() + "'>" + customFooter + "</td></tr></tfoot>");
+            html.Append("<tfoot><tr><td colspan='" + maxColumn + "'>" + customFooter + "</td></tr></tfoot>");
 
             html.Append("</table>");
 
             if (isCustomStyle == false)
                 html.Append("</div>");
 
-            if (counter == LastCounter)
+            if (counter == lastCounter)
             {
                 html.Append("</body>");
                 html.Append("</html>");
@@ -104,13 +100,11 @@ namespace SqlClrCustomSendMail
             html = null;
             return retvalu;
         }
-        public static string MakeTableRotateKeyValue(List<object[]> dt, string caption, string footer, string style, int maxColumn, int maxCounter, int counter, int LastCounter)
+        public static string MakeTableRotateKeyValue(List<object[]> dt, string caption, string footer, string style, int maxColumn, int maxCounter, int counter, int lastCounter)
         {
 
             StringBuilder html = new StringBuilder();
-            bool isCustomStyle = false;
-            if (style.Contains("<style type"))
-                isCustomStyle = true;
+            bool isCustomStyle = style.Contains("<style type");
             if (counter.Equals(0))
             {
                 html.Append("<html><head><meta charset='utf-8'/>");
@@ -120,7 +114,7 @@ namespace SqlClrCustomSendMail
             //???
             if (isCustomStyle == false)
             {
-                string appendName = style.Equals(string.Empty) ? DetermineStyle.ST_BLUE : style;
+                string appendName = style.Equals(string.Empty) ? DetermineStyle.StBlue : style;
                 html.Append("<div class='datagrid" + appendName + "'>");
                 html.Append("<table>");
             }
@@ -143,7 +137,7 @@ namespace SqlClrCustomSendMail
             html.Append("Key");
             html.Append("</th>");
             int no = 0;
-            for (int r1 = 1; r1 < maxCounter; r1++)
+            for (var r1 = 1; r1 < maxCounter; r1++)
             {
                 html.Append("<th>");
                 if (no == 0)
@@ -161,14 +155,14 @@ namespace SqlClrCustomSendMail
 
 
             //int i = 0;
-            for (int i1 = 0; i1 < maxColumn; i1++)
+            for (var i1 = 0; i1 < maxColumn; i1++)
             {
                 html.Append("<tr>");
                 html.Append("<td>");
                 html.Append(dt[0][i1]);
                 html.Append("</td>");
 
-                for (int i2 = 1; i2 < maxCounter; i2++)
+                for (var i2 = 1; i2 < maxCounter; i2++)
                 {
                     html.Append("<td>");
                     if (dt[i2][i1].ToString().Trim().Contains("<"))
@@ -188,16 +182,16 @@ namespace SqlClrCustomSendMail
             string customFooter = footer;
             if (footer == "#")
             {
-                customFooter = "Total records : " + maxCounter.ToString();
+                customFooter = "Total records : " + maxCounter;
             }
-            html.Append("<tfoot><tr><td colspan='" + maxColumn.ToString() + "'>" + customFooter + "</td></tr></tfoot>");
+            html.Append("<tfoot><tr><td colspan='" + maxColumn + "'>" + customFooter + "</td></tr></tfoot>");
 
             html.Append("</table>");
 
             if (isCustomStyle == false)
                 html.Append("</div>");
 
-            if (counter == LastCounter)
+            if (counter == lastCounter)
             {
                 html.Append("</body>");
                 html.Append("</html>");
@@ -207,13 +201,11 @@ namespace SqlClrCustomSendMail
             return retvalu;
         }
 
-        public static string MakeTableRotate(List<object[]> dt, string caption, string footer, string style, int maxColumn, int maxCounter, int pco, int counter, int LastCounter)
+        public static string MakeTableRotate(List<object[]> dt, string caption, string footer, string style, int maxColumn, int maxCounter, int pco, int counter, int lastCounter)
         {
 
-            StringBuilder html = new StringBuilder();
-            bool isCustomStyle = false;
-            if (style.Contains("<style type"))
-                isCustomStyle = true;
+            var html = new StringBuilder();
+            var isCustomStyle = style.Contains("<style type");
 
 
             //????
@@ -226,7 +218,7 @@ namespace SqlClrCustomSendMail
             //???
             if (isCustomStyle == false)
             {
-                string appendName = style.Equals(string.Empty) ? DetermineStyle.ST_BLUE : style;
+                string appendName = style.Equals(string.Empty) ? DetermineStyle.StBlue : style;
                 html.Append("<div class='datagrid" + appendName + "'>");
                 html.Append("<table>");
             }
@@ -297,16 +289,16 @@ namespace SqlClrCustomSendMail
             string customFooter = footer;
             if (footer == "#")
             {
-                customFooter = "Total records : " + maxCounter.ToString();
+                customFooter = "Total records : " + maxCounter;
             }
-            html.Append("<tfoot><tr><td colspan='" + maxColumn.ToString() + "'>" + customFooter + "</td></tr></tfoot>");
+            html.Append("<tfoot><tr><td colspan='" + maxColumn + "'>" + customFooter + "</td></tr></tfoot>");
 
             html.Append("</table>");
 
             if (isCustomStyle == false)
                 html.Append("</div>");
 
-            if (counter == LastCounter)
+            if (counter == lastCounter)
             {
                 html.Append("</body>");
                 html.Append("</html>");

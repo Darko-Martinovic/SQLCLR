@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Net.Mail;
-using System.Text;
+
 
 namespace SqlClrCustomSendMail
 {
@@ -10,42 +8,42 @@ namespace SqlClrCustomSendMail
         /// <summary>
         /// An instance of SmptClient
         /// </summary>
-        public SmtpClient client
+        public SmtpClient Client
         {
             get; set;
         } = null;
         /// <summary>
         /// Default from address
         /// </summary>
-        public string defaultFromAddress
+        public string DefaultFromAddress
         {
             get; set;
         } = null;
         /// <summary>
         /// Default display name
         /// </summary>
-        public string defaultDisplayName
+        public string DefaultDisplayName
         {
             get; set;
         } = null;
         /// <summary>
         /// Default domain name for Exchange users
         /// </summary>
-        public string defaultDomain
+        public string DefaultDomain
         {
             get; set;
         } = null;
         /// <summary>
         /// Default name
         /// </summary>
-        public string name
+        public string Name
         {
             get; set;
         } = null;
         /// <summary>
         /// Built-in name
         /// </summary>
-        public string builInName
+        public string BuilInName
         {
             get; set;
         } = null;

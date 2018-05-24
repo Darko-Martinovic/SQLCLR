@@ -12,8 +12,15 @@ namespace SqlClrCustomSendMail
     {
         public static bool SaveEmail(MailMessage mm, string profileName, string configurationName,string validAttachments,bool saveAttachments)
         {
-            bool retValue = true;
-            string cmdString = @"DECLARE @MyTableVar table( mailId bigint)
+            var retValue = true;
+
+
+            using (var conn = new SqlConnection("context connection=true"))
+            {
+                using (var comm = new SqlCommand())
+                {
+                    comm.Connection = conn;
+                    comm.CommandText = @"DECLARE @MyTableVar table( mailId bigint)
 INSERT INTO [EMAIL].[MailItems]
            ([profileName]
            ,[configurationName]
@@ -43,15 +50,6 @@ OUTPUT INSERTED.mailitem_id INTO @MyTableVar
            ,@importance
            ,@sensitivity
            ,@fileAttachments);SELECT mailId FROM @MyTableVar";
-
-            string connString = "context connection=true";
-
-            using (SqlConnection conn = new SqlConnection(connString))
-            {
-                using (SqlCommand comm = new SqlCommand())
-                {
-                    comm.Connection = conn;
-                    comm.CommandText = cmdString;
                     //comm.Parameters.AddWithValue("@timeStamp", timeStamp);
                     //comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.DateTime;
 
@@ -107,7 +105,7 @@ OUTPUT INSERTED.mailitem_id INTO @MyTableVar
                     comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.VarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = 20;
 
-                    comm.Parameters.AddWithValue("@sensitivity", mm.Headers.Count > 0 && mm.Headers["Sensitivity"] != null ? mm.Headers["Sensitivity"].ToString() : null);
+                    comm.Parameters.AddWithValue("@sensitivity", mm.Headers.Count > 0 && mm.Headers["Sensitivity"] != null ? mm.Headers["Sensitivity"] : null);
                     comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.VarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = 20;
 
@@ -121,7 +119,7 @@ OUTPUT INSERTED.mailitem_id INTO @MyTableVar
                         conn.Open();
                       
                         comm.Transaction = conn.BeginTransaction();
-                        Int64 id = (Int64)comm.ExecuteScalar();
+                        var id = (long)comm.ExecuteScalar();
                         comm.Parameters.Clear();
                         
                         if (saveAttachments && validAttachments.Trim().Equals(string.Empty) == false)
@@ -133,15 +131,15 @@ OUTPUT INSERTED.mailitem_id INTO @MyTableVar
                             comm.Parameters.AddWithValue("@mailItem", id);
                             comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.BigInt;
 
-                            DataTable dt = CreateTable();
-                            DataRow newRow = null;
-                            foreach (Attachment eml in mm.Attachments)
+                            var dt = CreateTable();
+                            DataRow newRow ;
+                            foreach (var eml in mm.Attachments)
                             {
                                 newRow = dt.NewRow();
                                 newRow["FileName"] = eml.Name;
                                 newRow["FileSize"] = eml.ContentStream.Length;
                                 byte[] allBytes = new byte[eml.ContentStream.Length];
-                                int bytesRead = eml.ContentStream.Read(allBytes, 0, (int)eml.ContentStream.Length);
+                                var bytesRead = eml.ContentStream.Read(allBytes, 0, (int)eml.ContentStream.Length);
                                 newRow["Attachment"] = allBytes;
                                 eml.ContentStream.Position = 0;
                                 dt.Rows.Add(newRow);
@@ -176,10 +174,10 @@ OUTPUT INSERTED.mailitem_id INTO @MyTableVar
 
         private static DataTable CreateTable()
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("FileName", typeof(String));
-            dt.Columns.Add("FileSize", typeof(Int64));
-            dt.Columns.Add("Attachment", typeof(Byte[]));
+            var dt = new DataTable();
+            dt.Columns.Add("FileName", typeof(string));
+            dt.Columns.Add("FileSize", typeof(long));
+            dt.Columns.Add("Attachment", typeof(byte[]));
             return dt;
         }
     }

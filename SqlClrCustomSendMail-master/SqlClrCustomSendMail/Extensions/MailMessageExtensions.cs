@@ -9,16 +9,16 @@ namespace SqlClrCustomSendMail
     {
         public static string HeaderInformation(this MailMessage mm)
         {
-            return @"From     : " + "'" + mm.From.Address.Trim() + "'" + "\r\n" +
-                    "To       : " + "'" + mm.To[0].Address.ToString().Trim() + "'" + "\r\n" +
-                    "Subject  : " + "'" + mm.Subject.ToString().Trim() + "'";
+            return $@"From     : '{mm.From.Address.Trim()}'
+To       : '{mm.To[0].Address.Trim()}'
+Subject  : '{mm.Subject.Trim()}'";
         }
         public static string Recipiens(this MailMessage mm)
         {
             string retValue = string.Empty;
-            foreach (MailAddress eml in mm.To)
+            foreach (var eml in mm.To)
             {
-                retValue += eml.Address.ToString() + ";";
+                retValue += eml.Address + ";";
             }
             return retValue;
         }
@@ -26,22 +26,22 @@ namespace SqlClrCustomSendMail
         public static string CopyRecipiens(this MailMessage mm)
         {
             string retValue = null;
-            foreach (MailAddress eml in mm.CC)
+            foreach (var eml in mm.CC)
             {
                 if (retValue == null)
                     retValue = string.Empty;
-                retValue += eml.Address.ToString() + ";";
+                retValue += eml.Address + ";";
             }
             return retValue;
         }
         public static string BccCopyRecipiens(this MailMessage mm)
         {
             string retValue = null;
-            foreach (MailAddress eml in mm.Bcc)
+            foreach (var eml in mm.Bcc)
             {
                 if (retValue == null)
                     retValue = string.Empty;
-                retValue += eml.Address.ToString() + ";";
+                retValue += eml.Address + ";";
             }
             return retValue;
         }
@@ -50,11 +50,11 @@ namespace SqlClrCustomSendMail
         public static string ReplyToAddresses(this MailMessage mm)
         {
             string retValue = null;
-            foreach (MailAddress eml in mm.ReplyToList)
+            foreach (var eml in mm.ReplyToList)
             {
                 if (retValue == null)
                     retValue = string.Empty;
-                retValue += eml.Address.ToString() + ";";
+                retValue += eml.Address + ";";
             }
             return retValue;
         }
@@ -63,7 +63,7 @@ namespace SqlClrCustomSendMail
         public static string AttachmentsPath(this MailMessage mm)
         {
             string retValue = null;
-            foreach (Attachment eml in mm.Attachments)
+            foreach (var eml in mm.Attachments)
             {
                 if (retValue == null)
                     retValue = string.Empty;

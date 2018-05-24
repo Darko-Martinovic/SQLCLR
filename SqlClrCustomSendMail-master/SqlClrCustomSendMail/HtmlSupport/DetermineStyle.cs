@@ -1,33 +1,29 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-//---http://tablestyler.com/#
 namespace SqlClrCustomSendMail
 {
 
     class DetermineStyle
     {
-        const string ST_RED = "ST_RED";
-        const string ST_GREEN = "ST_GREEN";
-        const string ST_ROSE = "ST_ROSE";
-        const string ST_BROWN = "ST_BROWN";
-        const string ST_BLACK = "ST_BLACK";
-        public const string ST_BLUE = "ST_BLUE";
-        public const string ST_SIMPLE = "ST_SIMPLE";
-        public const string ST_NO_STYLE = "ST_NO_STYLE";
+        public const string StRed = "ST_RED";
+        public const string StGreen = "ST_GREEN";
+        public const string StRose = "ST_ROSE";
+        public const string StBrown = "ST_BROWN";
+        public const string StBlack = "ST_BLACK";
+        public const string StBlue = "ST_BLUE";
+        public const string StSimple = "ST_SIMPLE";
+        public const string StNoStyle = "ST_NOSTYLE";
 
 
         public static string DetermineStyleName(string style)
         {
-            string styleName = "unknowen";
-            string[] tester = null;
+            var styleName = "unknowen";
+            string[] tester;
 
             if (style.Contains("table."))
             {
                 tester = style.Split(new string[] { "table." }, StringSplitOptions.RemoveEmptyEntries);
                 string valueString = tester[1];
-                styleName = valueString.Substring(0, valueString.IndexOf("{")).Trim();
+                styleName = valueString.Substring(0, valueString.IndexOf("{", StringComparison.Ordinal)).Trim();
                 valueString = null;
             }
 
@@ -40,7 +36,7 @@ namespace SqlClrCustomSendMail
 
         public static string GetStyle(string style)
         {
-            string defaultStyle = @"
+            var defaultStyle = @"
     <style type='text/css'>
         .datagridST_BLUE table {
             text-align: left;
@@ -125,10 +121,11 @@ namespace SqlClrCustomSendMail
 
 ";
 
-            //Apply default style 
-            if (style == ST_RED)
+            switch (style)
             {
-                defaultStyle = @"
+                //Apply default style 
+                case StRed:
+                    defaultStyle = @"
     <style type='text/css'>
         .datagridST_RED table {
            text-align: left;
@@ -206,12 +203,9 @@ namespace SqlClrCustomSendMail
             position: fixed !important;
         }
     </style>";
-
-
-            }
-            else if (style == ST_GREEN)
-            {
-                defaultStyle = @"
+                    break;
+                case StGreen:
+                    defaultStyle = @"
     <style type='text/css'>
         .datagridST_GREEN table {
             text-align: left;
@@ -284,12 +278,9 @@ namespace SqlClrCustomSendMail
             position: fixed !important;
         }
     </style>";
-
-
-            }
-            else if (style == ST_ROSE)
-            {
-                defaultStyle = @"
+                    break;
+                case StRose:
+                    defaultStyle = @"
     <style type='text/css'>
         .datagridST_ROSE table {
             text-align: left;
@@ -366,12 +357,9 @@ namespace SqlClrCustomSendMail
             position: fixed !important;
         }
     </style>";
-
-            }
-
-            else if (style == ST_BLACK)
-            {
-                defaultStyle = @"
+                    break;
+                case StBlack:
+                    defaultStyle = @"
     <style type='text/css'>
         .datagridST_BLACK table {
             text-align: left;
@@ -447,12 +435,9 @@ namespace SqlClrCustomSendMail
             position: fixed !important;
         }
     </style>";
-
-            }
-
-            else if (style == ST_BROWN)
-            {
-                defaultStyle = @"
+                    break;
+                case StBrown:
+                    defaultStyle = @"
     <style type='text/css'>
         .datagridST_BROWN table {
             text-align: left;
@@ -525,11 +510,9 @@ namespace SqlClrCustomSendMail
             position: fixed !important;
         }
     </style>";
-
-            }
-            else if ( style == ST_SIMPLE)
-            {
-                defaultStyle = @"
+                    break;
+                case StSimple:
+                    defaultStyle = @"
                     <style type='text/css'> 
                     .datagridST_SIMPLE table {
                     { 
@@ -572,19 +555,21 @@ namespace SqlClrCustomSendMail
                     } 
                     </style>
                     ";
-            }
-            else if (style == ST_NO_STYLE)
-            {
-                defaultStyle = @"
+                    break;
+                case StNoStyle:
+                    defaultStyle = @"
     <style type='text/css'>
         .datagridST_NO_STYLE table {
         }
     </style>";
-            }
+                    break;
+                default:
+                    if (style != "" && style != StBlue)
+                    {
+                        defaultStyle = style;
+                    }
 
-            else if (style != "" && style != ST_BLUE)
-            {
-                defaultStyle = style;
+                    break;
             }
             return defaultStyle; ;
         }

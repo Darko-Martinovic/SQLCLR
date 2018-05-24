@@ -1,14 +1,7 @@
 using System;
-using System.Data;
-using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Xml.Linq;
-using System.Collections.Generic;
-using System.Collections;
 using Microsoft.SqlServer.Server;
-using System.Linq;
-using System.Runtime;
-using System.Diagnostics;
 
 public partial class UserDefinedFunctions
 {
@@ -20,31 +13,34 @@ public partial class UserDefinedFunctions
         SqlString sHtml  //add on html
 )
     {
-        XDocument doc = null;
         string retValue = string.Empty;
         try
         {
             string mainHtml = mHtml.Value;
             string addOnHtml = sHtml.Value;
             string styleAddOnName = DetermineStyleName(ExtractStyle(addOnHtml));
-            doc = XDocument.Parse(mainHtml);
+            var doc = XDocument.Parse(mainHtml);
             if (styleAddOnName.Equals(string.Empty) == false)
             {
                 if (mainHtml.Contains(styleAddOnName) == false)
                 {
                     string mainStyle = ExtractStyle(mainHtml);
-                    XElement style = doc.Element("html").Element("head").Element("style");
+                    var style = doc.Element("html")?.Element("head")?.Element("style");
                     string addonStyle = ExtractStyle(addOnHtml);
-                    style.Add(addonStyle);
+                    style?.Add(addonStyle);
                 }
             }
-            XElement body = doc.Element("html").Element("body");
-            XElement addON = ExtractBodyElement(addOnHtml);
-            body.LastNode.AddAfterSelf(addON.Descendants("div"));
-            retValue = doc.ToString();
-            doc = null;
+            var body = doc.Element("html")?.Element("body");
+            var addOn = ExtractBodyElement(addOnHtml);
+            if (body != null)
+            {
+                body.LastNode.AddAfterSelf(addOn.Descendants("div"));
+                retValue = doc.ToString();
+                doc = null;
+            }
+
             body = null;
-            addON = null;
+            addOn = null;
             mainHtml = null;
             addOnHtml = null;
             styleAddOnName = null;
@@ -84,10 +80,14 @@ public partial class UserDefinedFunctions
     public static string ExtractStyle(string tester)
     {
         string result = "";
-        XDocument doc = XDocument.Parse(tester);
-        XElement style = doc.Element("html").Element("head").Element("style");
-        result = style.Value;
-        doc = null;
+        var doc = XDocument.Parse(tester);
+        var style = doc.Element("html")?.Element("head")?.Element("style");
+        if (style != null)
+        {
+            result = style.Value;
+            doc = null;
+        }
+
         style = null;
         return result;
 
@@ -95,21 +95,20 @@ public partial class UserDefinedFunctions
     public static string DetermineStyleName(string style)
     {
         string styleName = "unknowen";
-        string[] tester = null;
 
         if (style.Contains("table"))
         {
-            tester = style.Split(new string[] { "table" }, StringSplitOptions.RemoveEmptyEntries);
-            string valueString = tester[0];
-            styleName = valueString.Substring(valueString.IndexOf("."), valueString.Length - valueString.IndexOf(".")).Trim();
+            var tester = style.Split(new string[] { "table" }, StringSplitOptions.RemoveEmptyEntries);
+            var valueString = tester[0];
+            styleName = valueString.Substring(valueString.IndexOf(".", StringComparison.Ordinal), valueString.Length - valueString.IndexOf(".", StringComparison.Ordinal)).Trim();
         }
         return styleName;
 
     }
     public static XElement ExtractBodyElement(string tester)
     {
-        XDocument doc = XDocument.Parse(tester);
-        return doc.Element("html").Element("body");
+        var doc = XDocument.Parse(tester);
+        return doc.Element("html")?.Element("body");
     }
 
 
