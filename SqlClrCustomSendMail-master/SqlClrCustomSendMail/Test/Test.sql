@@ -1,6 +1,6 @@
 ﻿--Test query to html
 DECLARE @body as nvarchar(max)
-SET @body = EMAIL.QueryToHtml('SELECT * FROM sys.databases', '', 'sys.databases', '#', 2, 0, 'StRed')
+SET @body = EMAIL.QueryToHtml('SELECT * FROM sys.databases', '', 'sys.databases', '#', 2, 0, 'ST_RED')
 EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 						  ,@mailTo = N'darko.martinovic@outlook.com'
 						  ,@mailSubject = N'Test QueryToHtml'
