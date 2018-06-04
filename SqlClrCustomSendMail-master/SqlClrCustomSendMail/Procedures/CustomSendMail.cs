@@ -67,8 +67,11 @@ public partial class StoredProcedures
                 sc = GetConfig(configName.Value, ref error);
                 if (sc == null)
                 {
-                    LogEntry.LogItem($"Configuration is not defined !",  "Warning",  "There is an error when trying to determine config : " + error, "Config name : " + configName.Value);
-                    pipe?.Send($"Configuration is not defined !{error}" != "" ? "There is an error when trying to determine config : " + error : "");
+                    LogEntry.LogItem($"Configuration is not defined !",  "Warning",
+                        $"There is an error when trying to determine config : {error}",
+                        $"Config name : {configName.Value}");
+                    pipe?.Send($"Configuration is not defined !{error}" != "" ? $"There is an error when trying to determine config : {error}"
+                        : "");
                     return;
                 }
             }
@@ -76,8 +79,11 @@ public partial class StoredProcedures
             mailClrClient = GetClient(profileName.Value, ref error);
             if (mailClrClient == null)
             {
-                LogEntry.LogItem("Profile is not defined !",  "Warning", "There is an error when trying to determine profile : " + error, "Profile name : " + profileName.Value);
-                pipe?.Send($"Profile is not defined !{error}" != "" ? "There is an error when trying to determine profile : " + error : "");
+                LogEntry.LogItem("Profile is not defined !",  "Warning",
+                    $"There is an error when trying to determine profile : {error}",
+                    $"Profile name : {profileName.Value}");
+                pipe?.Send($"Profile is not defined !{error}" != "" ? $"There is an error when trying to determine profile : {error}"
+                    : "");
                 return;
             }
 
@@ -106,11 +112,22 @@ public partial class StoredProcedures
 
 
             if (mailClrClient.Client.EnableSsl)
-                ServicePointManager.ServerCertificateValidationCallback = (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) => true;
+                ServicePointManager.ServerCertificateValidationCallback = (object s, X509Certificate certificate,
+                    X509Chain chain, SslPolicyErrors sslPolicyErrors) => true;
 
 
             if (sc.SendAsync)
+            {
+                //mailClrClient.Client.SendCompleted += new
+                //SendCompletedEventHandler(SendCompletedCallback);
+                // The userState can be any object that allows your callback 
+                // method to identify this send operation.
+                // For this example, the userToken is a string constant.
+                //string userState = "SQLCLR does not fire this event";
+                //mailClrClient.Client.SendAsync(eMail, userState);
+
                 mailClrClient.Client.SendAsync(eMail, null);
+            }
             else
                 mailClrClient.Client.Send(eMail);
 
@@ -123,6 +140,8 @@ public partial class StoredProcedures
             if (sc.SaveEmails)
                 EmailTracker.SaveEmail(eMail, mailClrClient.Name, sc.Name, validAttachment,sc.SaveAttachments);
 
+            if (sc.SendAsync == false)
+                eMail.Dispose();
         }
         catch (Exception ex)
         {
@@ -144,6 +163,23 @@ public partial class StoredProcedures
 
     }
 
+    //static bool mailSent = false;
+    //private static void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
+    //{
+    //    // Get the unique identifier for this asynchronous operation.
+    //    String token = (string)e.UserState;
+
+    //    if (e.Cancelled)
+    //    {
+    //    }
+    //    if (e.Error != null)
+    //    {
+    //    }
+    //    else
+    //    {
+    //    }
+    //    mailSent = true;
+    //}
     private static MailAddress DetermineFromAddress(string fromAddress, string displayName, SysProfile sp)
     {
         MailAddress retValue;
