@@ -35,7 +35,7 @@ public partial class StoredProcedures
 
 
         SysProfile mailClrClient;
-        MailMessage eMail;
+        MailMessage eMail = null;
         SysConfig sc;
         var validAttachment = string.Empty;
         var pipe = SqlContext.Pipe;
@@ -129,8 +129,10 @@ public partial class StoredProcedures
                 mailClrClient.Client.SendAsync(eMail, null);
             }
             else
+            { 
                 mailClrClient.Client.Send(eMail);
-
+                eMail.Dispose();
+            }
             if (sc.NoPiping == false)
                 pipe.Send("Sent successfully!");
 
@@ -152,7 +154,9 @@ public partial class StoredProcedures
         }
         finally
         {
-            eMail = null;
+            if (eMail != null)
+                eMail = null;
+
             sc = null;
             mailClrClient = null;
         }
