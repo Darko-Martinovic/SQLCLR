@@ -131,7 +131,6 @@ public partial class StoredProcedures
             else
             { 
                 mailClrClient.Client.Send(eMail);
-                eMail.Dispose();
             }
             if (sc.NoPiping == false)
                 pipe.Send("Sent successfully!");
@@ -142,6 +141,7 @@ public partial class StoredProcedures
             if (sc.SaveEmails)
                 EmailTracker.SaveEmail(eMail, mailClrClient.Name, sc.Name, validAttachment,sc.SaveAttachments);
 
+            //Dispose
             if (sc.SendAsync == false)
                 eMail.Dispose();
         }
