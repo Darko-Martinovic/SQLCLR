@@ -3,7 +3,7 @@ EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
 					 ,@mailTo = N'darko.martinovic@outlook.com'
 					 ,@configName = N'sync' -- send sync a message is disposed after sending
 					 ,@mailSubject = 'test'
-					 ,@fileAttachments = N'\\db2\Restore\b.docx'
+					 ,@fileAttachments = '\\host-name\share-name\file_path' --replace with your UNC path
 					 ,@mailBody = N'body mail ';
 --Test attachments
 EXEC [EMAIL].[CLRSendMail]	@profileName = N'SimpleTalk'
