@@ -1,16 +1,20 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Net.Mail;
-using System.Text;
 
 namespace SqlClrCustomSendMail
 {
     public class EmailTracker
     {
-        public static bool SaveEmail(MailMessage mm, string profileName, string configurationName,string validAttachments,bool saveAttachments)
+        public static bool SaveEmail(
+                                MailMessage mm, 
+                                string profileName, 
+                                string configurationName,
+                                string validAttachments,
+                                bool saveAttachments
+            )
+
         {
             var retValue = true;
 
@@ -54,63 +58,63 @@ OUTPUT INSERTED.mailitem_id INTO @MyTableVar
                     //comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.DateTime;
 
                     comm.Parameters.AddWithValue("@profileName", profileName);
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.Char;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.Char;
                     comm.Parameters[comm.Parameters.Count - 1].Size = 20;
 
                     comm.Parameters.AddWithValue("@configurationName", configurationName);
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.Char;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.Char;
                     comm.Parameters[comm.Parameters.Count - 1].Size = 20;
 
 
                     comm.Parameters.AddWithValue("@recipiens", mm.Recipiens());
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.VarChar;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.VarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = -1;
 
                     comm.Parameters.AddWithValue("@copyRecipiens", mm.CopyRecipiens());
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.VarChar;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.VarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = -1;
 
 
                     comm.Parameters.AddWithValue("@bccRecipiens", mm.BccCopyRecipiens());
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.VarChar;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.VarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = -1;
 
 
                     comm.Parameters.AddWithValue("@subject", mm.Subject);
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.NVarChar;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.NVarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = 255;
 
 
                     comm.Parameters.AddWithValue("@fromAddress", mm.From.Address);
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.VarChar;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.VarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = -1;
 
 
                     comm.Parameters.AddWithValue("@replayToAddresses", mm.ReplyToAddresses());
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.VarChar;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.VarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = -1;
 
 
-                    comm.Parameters.AddWithValue("@body", mm.Body.ToString());
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.NVarChar;
+                    comm.Parameters.AddWithValue("@body", mm.Body);
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.NVarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = -1;
 
 
 
                     comm.Parameters.AddWithValue("@bodyFormat", mm.IsBodyHtml ? "HTML" : "TEXT");
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.VarChar;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.VarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = 20;
 
                     comm.Parameters.AddWithValue("@importance", mm.Priority.ToString());
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.VarChar;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.VarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = 20;
 
                     comm.Parameters.AddWithValue("@sensitivity", mm.Headers.Count > 0 && mm.Headers["Sensitivity"] != null ? mm.Headers["Sensitivity"] : null);
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.VarChar;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.VarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = 20;
 
                     comm.Parameters.AddWithValue("@fileAttachments", mm.AttachmentsPath());
-                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.NVarChar;
+                    comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.NVarChar;
                     comm.Parameters[comm.Parameters.Count - 1].Size = -1;
 
 
@@ -125,11 +129,12 @@ OUTPUT INSERTED.mailitem_id INTO @MyTableVar
                         if (saveAttachments && validAttachments.Trim().Equals(string.Empty) == false)
                         {
 
-                            comm.CommandText = @"INSERT INTO [EMail].[MailAttachments] (mailitem_id,fileName,fileSize,attachment)
+                            comm.CommandText =
+                                @"INSERT INTO [EMail].[MailAttachments] (mailitem_id,fileName,fileSize,attachment)
                                              SELECT @mailItem, fileName, fileSize, attachment FROM @tvpEmails";
 
                             comm.Parameters.AddWithValue("@mailItem", id);
-                            comm.Parameters[comm.Parameters.Count - 1].SqlDbType = System.Data.SqlDbType.BigInt;
+                            comm.Parameters[comm.Parameters.Count - 1].SqlDbType = SqlDbType.BigInt;
 
                             var dt = CreateTable();
                             DataRow newRow ;
@@ -138,8 +143,8 @@ OUTPUT INSERTED.mailitem_id INTO @MyTableVar
                                 newRow = dt.NewRow();
                                 newRow["FileName"] = eml.Name;
                                 newRow["FileSize"] = eml.ContentStream.Length;
-                                byte[] allBytes = new byte[eml.ContentStream.Length];
-                                var bytesRead = eml.ContentStream.Read(allBytes, 0, (int)eml.ContentStream.Length);
+                                var allBytes = new byte[eml.ContentStream.Length];
+                                //var bytesRead = eml.ContentStream.Read(allBytes, 0, (int)eml.ContentStream.Length);
                                 newRow["Attachment"] = allBytes;
                                 eml.ContentStream.Position = 0;
                                 dt.Rows.Add(newRow);

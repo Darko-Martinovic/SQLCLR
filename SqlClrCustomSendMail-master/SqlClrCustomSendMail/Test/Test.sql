@@ -1,4 +1,19 @@
-﻿--Test query to html
+﻿--Test UNC path
+EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
+					 ,@mailTo = N'darko.martinovic@outlook.com'
+					 ,@configName = N'sync' -- Send sync. A message is disposed after sending
+					 ,@mailSubject = 'test'
+					 ,@fileAttachments = '\\host-name\share-name\file_path' --replace with your UNC path
+					 ,@mailBody = N'body mail ';
+--Test attachments
+EXEC [EMAIL].[CLRSendMail]	@profileName = N'SimpleTalk'
+							,@mailTo = N'darko.martinovic@outlook.com'
+							,@configName =N'default'
+							,@mailSubject = 'Test attachments'
+							,@fileAttachments = 'D:\a.docx'
+							,@mailBody = N'Test attachments';
+
+--Test query to html
 DECLARE @body as nvarchar(max)
 SET @body = EMAIL.QueryToHtml('SELECT * FROM sys.databases', '', 'sys.databases', '#', 2, 0, 'ST_RED')
 EXEC [EMAIL].[CLRSendMail] @profileName = N'SimpleTalk'
