@@ -1,17 +1,17 @@
 using System;
+// ReSharper disable once CheckNamespace
 namespace SqlClrCustomSendMail
 {
-
-    class DetermineStyle
+    internal static class DetermineStyle
     {
-        public const string StRed = "ST_RED";
-        public const string StGreen = "ST_GREEN";
-        public const string StRose = "ST_ROSE";
-        public const string StBrown = "ST_BROWN";
-        public const string StBlack = "ST_BLACK";
+        private const string StRed = "ST_RED";
+        private const string StGreen = "ST_GREEN";
+        private const string StRose = "ST_ROSE";
+        private const string StBrown = "ST_BROWN";
+        private const string StBlack = "ST_BLACK";
         public const string StBlue = "ST_BLUE";
-        public const string StSimple = "ST_SIMPLE";
-        public const string StNoStyle = "ST_NOSTYLE";
+        private const string StSimple = "ST_SIMPLE";
+        private const string StNoStyle = "ST_NOSTYLE";
 
 
         public static string DetermineStyleName(string style)
@@ -21,12 +21,14 @@ namespace SqlClrCustomSendMail
 
             if (style.Contains("table."))
             {
-                tester = style.Split(new string[] { "table." }, StringSplitOptions.RemoveEmptyEntries);
-                string valueString = tester[1];
+                tester = style.Split(new[] { "table." }, StringSplitOptions.RemoveEmptyEntries);
+                var valueString = tester[1];
                 styleName = valueString.Substring(0, valueString.IndexOf("{", StringComparison.Ordinal)).Trim();
+                // ReSharper disable once RedundantAssignment
                 valueString = null;
             }
 
+            // ReSharper disable once RedundantAssignment
             tester = null;
             return styleName;
 
@@ -571,7 +573,8 @@ namespace SqlClrCustomSendMail
 
                     break;
             }
-            return defaultStyle; ;
+            return defaultStyle;
+
         }
 
     }

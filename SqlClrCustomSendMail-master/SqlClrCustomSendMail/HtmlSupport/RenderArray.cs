@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Text;
 
+// ReSharper disable once CheckNamespace
 namespace SqlClrCustomSendMail
 {
-    class RenderArray
+    internal static class RenderArray
     {
-        public static string MakeTable(List<object[]> dt, string caption, string footer, string style, int maxColumn, int maxCounter, int counter, int lastCounter)
+        public static string MakeTable(List<object[]> dt, string caption, string footer, string style, int maxColumn,
+            int maxCounter, int counter, int lastCounter)
         {
 
             var html = new StringBuilder();
@@ -21,16 +23,16 @@ namespace SqlClrCustomSendMail
             if (isCustomStyle == false)
             {
                 var appendName = style.Equals(string.Empty) ? DetermineStyle.StBlue : style;
-                html.Append("<div class='datagrid" + appendName + "'>");
+                html.Append($"<div class=\'datagrid{appendName}\'>");
                 html.Append("<table>");
             }
             else
             {
                 var styleName = DetermineStyle.DetermineStyleName(style);
-                html.Append("<table class='" + styleName + "'>");
+                html.Append($"<table class=\'{styleName}\'>");
             }
             if (caption != null && caption.Trim() != "")
-                html.Append("<caption>" + caption + "</caption>");
+                html.Append($"<caption>{caption}</caption>");
 
             html.Append("<thead>");
 
@@ -42,7 +44,7 @@ namespace SqlClrCustomSendMail
             for (var i1 = 0; i1 < maxColumn; i1++)
             {
                 html.Append("<th>");
-                html.Append(dt[0][i1].ToString());
+                html.Append(dt[0][i1]);
                 html.Append("</th>");
             }
             html.Append("</tr>");
@@ -81,9 +83,9 @@ namespace SqlClrCustomSendMail
             string customFooter = footer;
             if (footer == "#")
             {
-                customFooter = "Total records : " + maxCounter;
+                customFooter = $"Total records : {maxCounter}";
             }
-            html.Append("<tfoot><tr><td colspan='" + maxColumn + "'>" + customFooter + "</td></tr></tfoot>");
+            html.Append($"<tfoot><tr><td colspan=\'{maxColumn}\'>{customFooter}</td></tr></tfoot>");
 
             html.Append("</table>");
 
@@ -96,11 +98,13 @@ namespace SqlClrCustomSendMail
                 html.Append("</html>");
             }
 
-            string retvalu = html.ToString();
+            var retvalu = html.ToString();
+            // ReSharper disable once RedundantAssignment
             html = null;
             return retvalu;
         }
-        public static string MakeTableRotateKeyValue(List<object[]> dt, string caption, string footer, string style, int maxColumn, int maxCounter, int counter, int lastCounter)
+        public static string MakeTableRotateKeyValue(List<object[]> dt, string caption, string footer, string style,
+            int maxColumn, int maxCounter, int counter, int lastCounter)
         {
 
             StringBuilder html = new StringBuilder();
@@ -115,16 +119,16 @@ namespace SqlClrCustomSendMail
             if (isCustomStyle == false)
             {
                 string appendName = style.Equals(string.Empty) ? DetermineStyle.StBlue : style;
-                html.Append("<div class='datagrid" + appendName + "'>");
+                html.Append($"<div class=\'datagrid{appendName}\'>");
                 html.Append("<table>");
             }
             else
             {
                 string styleName = DetermineStyle.DetermineStyleName(style);
-                html.Append("<table class='" + styleName + "'>");
+                html.Append($"<table class=\'{styleName}\'>");
             }
             if (caption != null && caption.Trim() != "")
-                html.Append("<caption>" + caption + "</caption>");
+                html.Append($"<caption>{caption}</caption>");
 
             html.Append("<thead>");
 
@@ -182,9 +186,9 @@ namespace SqlClrCustomSendMail
             string customFooter = footer;
             if (footer == "#")
             {
-                customFooter = "Total records : " + maxCounter;
+                customFooter = $"Total records : {maxCounter}";
             }
-            html.Append("<tfoot><tr><td colspan='" + maxColumn + "'>" + customFooter + "</td></tr></tfoot>");
+            html.Append($"<tfoot><tr><td colspan=\'{maxColumn}\'>{customFooter}</td></tr></tfoot>");
 
             html.Append("</table>");
 
@@ -197,11 +201,13 @@ namespace SqlClrCustomSendMail
                 html.Append("</html>");
             }
             string retvalu = html.ToString();
+            // ReSharper disable once RedundantAssignment
             html = null;
             return retvalu;
         }
 
-        public static string MakeTableRotate(List<object[]> dt, string caption, string footer, string style, int maxColumn, int maxCounter, int pco, int counter, int lastCounter)
+        public static string MakeTableRotate(List<object[]> dt, string caption, string footer, string style,
+            int maxColumn, int maxCounter, int pco, int counter, int lastCounter)
         {
 
             var html = new StringBuilder();
@@ -219,16 +225,16 @@ namespace SqlClrCustomSendMail
             if (isCustomStyle == false)
             {
                 string appendName = style.Equals(string.Empty) ? DetermineStyle.StBlue : style;
-                html.Append("<div class='datagrid" + appendName + "'>");
+                html.Append($"<div class=\'datagrid{appendName}\'>");
                 html.Append("<table>");
             }
             else
             {
                 string styleName = DetermineStyle.DetermineStyleName(style);
-                html.Append("<table class='" + styleName + "'>");
+                html.Append($"<table class=\'{styleName}\'>");
             }
             if (caption != null && caption.Trim() != "")
-                html.Append("<caption>" + caption + "</caption>");
+                html.Append($"<caption>{caption}</caption>");
 
             html.Append("<thead>");
 
@@ -286,12 +292,12 @@ namespace SqlClrCustomSendMail
             }
             html.Append("</tbody>");
 
-            string customFooter = footer;
+            var customFooter = footer;
             if (footer == "#")
             {
-                customFooter = "Total records : " + maxCounter;
+                customFooter = $"Total records : {maxCounter}";
             }
-            html.Append("<tfoot><tr><td colspan='" + maxColumn + "'>" + customFooter + "</td></tr></tfoot>");
+            html.Append($"<tfoot><tr><td colspan=\'{maxColumn}\'>{customFooter}</td></tr></tfoot>");
 
             html.Append("</table>");
 
@@ -304,7 +310,8 @@ namespace SqlClrCustomSendMail
                 html.Append("</html>");
             }
 
-            string retvalu = html.ToString();
+            var retvalu = html.ToString();
+            // ReSharper disable once RedundantAssignment
             html = null;
             return retvalu;
         }

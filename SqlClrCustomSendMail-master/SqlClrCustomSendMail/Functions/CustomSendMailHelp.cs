@@ -1,37 +1,41 @@
 using System;
-using System.Data;
-using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using Microsoft.SqlServer.Server;
 using System.Collections;
 using System.Collections.Generic;
 
+
+
+
+// ReSharper disable once CheckNamespace
 public partial class UserDefinedFunctions
 {
-    [Microsoft.SqlServer.Server.SqlFunction(Name = "CustomSendMailHelp",
+    [SqlFunction(Name = "CustomSendMailHelp",
     FillRowMethodName = "ConfigTable_FillRow",
     DataAccess = DataAccessKind.None,
     IsDeterministic = true,
     TableDefinition = @"ParametarName nvarchar(100), ParametarDescription_______________________________________________________________________________________________________ nvarchar(max)")]
+    // ReSharper disable once UnusedMember.Global
     public static IEnumerable CustomSendMailHelp(
-        SqlString ProcedureName  //
+        SqlString procedureName  //
         )
     {
-        Dictionary<string, string> list = GetList(ProcedureName.Value);
+        Dictionary<string, string> list = GetList(procedureName.Value);
 
         return list;
 
     }
-    private static void ConfigTable_FillRow(object obj, out SqlString ParametarName, out SqlString ParametarDescription)
+    // ReSharper disable once UnusedMember.Local
+    private static void ConfigTable_FillRow(object obj, out SqlString parametarName, out SqlString parametarDescription)
     {
-        ParametarName = ((System.Collections.Generic.KeyValuePair<string, string>)(obj)).Key;
-        ParametarDescription = ((System.Collections.Generic.KeyValuePair<string, string>)(obj)).Value;
+        parametarName = ((KeyValuePair<string, string>)(obj)).Key;
+        parametarDescription = ((KeyValuePair<string, string>)(obj)).Value;
     }
 
-    public static Dictionary<string, string> GetList(string ProcedureName)
+    private static Dictionary<string, string> GetList(string procedureName)
     {
-        Dictionary<string, string> data = new Dictionary<string, string>();
-        if (ProcedureName.ToLower().Equals("email.clrsendmail"))
+        var data = new Dictionary<string, string>();
+        if (procedureName.ToLower().Equals("email.clrsendmail"))
         {
 
 
@@ -88,7 +92,7 @@ public partial class UserDefinedFunctions
             data.Add("@configName", "Is the name of the configuration. " +
     " Configuration is responsible for protecting system of large file attachements");
         }
-        else if (ProcedureName.ToLower().Equals("email.querytohtml"))
+        else if (procedureName.ToLower().Equals("email.querytohtml"))
         {
             data.Add("@Query", "Query or stored procedure which we will to transform into HTML. Stored procedure always should begin with keyword EXEC.");
             data.Add("@Params", "Query or stored procedure parametars");
@@ -98,14 +102,14 @@ public partial class UserDefinedFunctions
             data.Add("@Rco", "Rotate column ordinal. Valid value is for -1 to max column value. If you specify @Rm parametar = 0 @Rco parametar is ignored.");
             data.Add("@style", "There are 7 predefined styles, namely StBlue, ST_BLACK, ST_BROWN, ST_ROSE,ST_RED,ST_GREEN and StSimple. You can pass your custom css stylesheet as well.");
         }
-        else if (ProcedureName.ToLower().Equals("email.concathtml")) //ConCatHtml
+        else if (procedureName.ToLower().Equals("email.concathtml")) //ConCatHtml
         {
             data.Add("@mHtml", "Main html string. Should be well formatted. It means should have html, head and body tags.");
             data.Add("@sHtml", "Html string we want to merge with the main html string");
         }
         else
         {
-            data.Add("Error", "Procedure or function " + ProcedureName + " does not exists!");
+            data.Add("Error", "Procedure or function " + procedureName + " does not exists!");
         }
 
         for (int i = 0; i <= GC.MaxGeneration; i++)

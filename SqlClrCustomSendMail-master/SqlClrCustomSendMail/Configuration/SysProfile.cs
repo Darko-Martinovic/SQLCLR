@@ -1,6 +1,7 @@
 using System.Net.Mail;
 
 
+// ReSharper disable once CheckNamespace
 namespace SqlClrCustomSendMail
 {
     public class SysProfile
@@ -10,43 +11,50 @@ namespace SqlClrCustomSendMail
         /// </summary>
         public SmtpClient Client
         {
-            get; set;
-        } = null;
+            get;
+            set;
+        }
         /// <summary>
         /// Default from address
         /// </summary>
         public string DefaultFromAddress
         {
-            get; set;
-        } = null;
+            get;
+            set;
+        }
         /// <summary>
         /// Default display name
         /// </summary>
         public string DefaultDisplayName
         {
-            get; set;
-        } = null;
+            get;
+            set;
+        }
         /// <summary>
         /// Default domain name for Exchange users
         /// </summary>
         public string DefaultDomain
         {
-            get; set;
-        } = null;
+            get;
+            set;
+        }
         /// <summary>
         /// Default name
         /// </summary>
         public string Name
         {
-            get; set;
-        } = null;
+            get;
+            set;
+        }
         /// <summary>
         /// Built-in name
         /// </summary>
         public string BuilInName
         {
-            get; set;
-        } = null;
+            // ReSharper disable once UnusedAutoPropertyAccessor.Global
+            get;
+            set;
+        }
 
     }
 }

@@ -1,18 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text.RegularExpressions;
 using System.Globalization;
-using System.Collections.Generic;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
 
+// ReSharper disable once CheckNamespace
 namespace SqlClrCustomSendMail
 {
-    class DataAccess
+    internal class DataAccess
     {
-        public readonly List<object[]> Data = new List<object[]>();
-        public int RowCount = 0;
-        public int FieldCount = 0;
+        private readonly List<object[]> _data = new List<object[]>();
+        public int RowCount;
+        public int FieldCount;
         public List<object[]> GetData(string query, bool isSp, SqlParameter[] listOfParams, ref string html)
         {
             try
@@ -30,6 +31,7 @@ namespace SqlClrCustomSendMail
                             foreach (var p in listOfParams)
                                 command.Parameters.Add(p);
                         }
+
                         var dr = command.ExecuteReader();
 
                         FieldCount = dr.FieldCount;
@@ -37,14 +39,14 @@ namespace SqlClrCustomSendMail
                         for (var i = 0; i < FieldCount; i++)
                             o[i] = dr.GetName(i);
 
-                        Data.Add(o);
+                        _data.Add(o);
                         RowCount++;
 
                         while (dr.Read())
                         {
                             var o1 = new object[FieldCount];
                             dr.GetValues(o1);
-                            Data.Add(o1);
+                            _data.Add(o1);
                             RowCount++;
                         }
 
@@ -55,10 +57,11 @@ namespace SqlClrCustomSendMail
             {
                 html += ex.Message;
             }
-            return Data;
+
+            return _data;
         }
 
-        public static SysProfile GetProfile(SqlParameter[] listOfParams, EncryptSupport.Simple3Des wrapper,ref string errorMessage)
+        public static SysProfile GetProfile(SqlParameter[] listOfParams, EncryptSupport.Simple3Des wrapper, ref string errorMessage)
         {
             SysProfile p = null;
 
@@ -89,6 +92,7 @@ namespace SqlClrCustomSendMail
                             foreach (var p1 in listOfParams)
                                 command.Parameters.Add(p1);
                         }
+
                         SqlDataReader dr = command.ExecuteReader();
                         if (dr.Read())
                         {
@@ -105,15 +109,15 @@ namespace SqlClrCustomSendMail
                             p.Client.DeliveryMethod = (SmtpDeliveryMethod)Enum.Parse(typeof(SmtpDeliveryMethod), dr["DeliveryMethod"].ToString());
                             if (dr["Domain"] != DBNull.Value)
                             {
-                                p.DefaultDomain = (string)dr["Domain"];
+                                p.DefaultDomain = (string) dr["Domain"];
                                 if (p.Client.UseDefaultCredentials == false)
                                     p.Client.Credentials =
                                         new System.Net.NetworkCredential(wrapper.DecryptData((string) dr["UserName"]),
                                             wrapper.DecryptData((string) dr["Password"]), p.DefaultDomain);
-                                //                                p.client.Credentials = new System.Net.NetworkCredential((string)dr["UserName"], (string)dr["Password"], p.defaultDomain);
+
+// p.client.Credentials = new System.Net.NetworkCredential((string)dr["UserName"], (string)dr["Password"], p.defaultDomain);
                             }
-                            else
-                                if (p.Client.UseDefaultCredentials == false)
+                            else if (p.Client.UseDefaultCredentials == false)
                                     p.Client.Credentials = new System.Net.NetworkCredential(wrapper.DecryptData((string)dr["UserName"]), wrapper.DecryptData((string)dr["Password"]));
 
                             p.DefaultFromAddress = (string)dr["DefaultFrom"];
@@ -121,6 +125,7 @@ namespace SqlClrCustomSendMail
                                 p.DefaultDisplayName = (string)dr["DefaultGroup"];
                             dr.Close();
                         }
+
                         cnn.Close();
                     }
                 }
@@ -130,6 +135,7 @@ namespace SqlClrCustomSendMail
                 p = null;
                 errorMessage = ex.Message ;
             }
+
             return p;
         }
 
@@ -141,9 +147,9 @@ namespace SqlClrCustomSendMail
 
             try
             {
-                using (SqlConnection cnn = new SqlConnection("context connection=true"))
+                using (var cnn = new SqlConnection("context connection=true"))
                 {
-                    using (SqlCommand command = new SqlCommand(@"SELECT TOP 1 
+                    using (var command = new SqlCommand(@"SELECT TOP 1 
                                                                         [MaxFileSize]
                                                                        ,[ProhibitedExtensions]
                                                                        ,[LoggingLevel]
@@ -161,6 +167,7 @@ namespace SqlClrCustomSendMail
                             foreach (var p1 in listOfParams)
                                 command.Parameters.Add(p1);
                         }
+
                         var dr = command.ExecuteReader();
                         if (dr.Read())
                         {
@@ -178,6 +185,7 @@ namespace SqlClrCustomSendMail
                             };
                             dr.Close();
                         }
+
                         cnn.Close();
                     }
                 }
@@ -190,75 +198,10 @@ namespace SqlClrCustomSendMail
                     errorMessage += ex.InnerException.Message;
 
             }
+
             return p;
         }
 
-
-
-        public static DataSet GetDataSet(string query, bool isSp, SqlParameter[] listOfParams, string tableMapping,ref string html)
-        {
-            var ds = new DataSet();
-            try
-            {
-                using (var cnn = new SqlConnection("context connection=true"))
-                {
-                    using (var command = new SqlCommand(query, cnn))
-                    {
-                        cnn.Open();
-                        if (isSp)
-                            command.CommandType = CommandType.StoredProcedure;
-                        if (listOfParams != null)
-                        {
-                            foreach (var p in listOfParams)
-                            {
-                                command.Parameters.Add(p);
-                            }
-                        }
-                        string[] tm = tableMapping.Split(';');
-                        var i = 0;
-                        using (var sqlAdp = new SqlDataAdapter())
-                        {
-                            sqlAdp.SelectCommand = command;
-                            foreach (var s in tm)
-                            {
-                                var addOn = i == 0 ? "" : i.ToString().Trim();
-                                sqlAdp.TableMappings.Add("Table" + addOn, s);
-                                i++;
-                            }
-                            sqlAdp.Fill(ds);
-                        }
-                        cnn.Close();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                html += ex.Message;
-            }
-            return ds;
-        }
-
-        public static string GetResult(string query)
-        {
-            string ds = null;
-            try
-            {
-                using (var cnn = new SqlConnection("context connection=true"))
-                {
-                    using (var command = new SqlCommand(query, cnn))
-                    {
-                        cnn.Open();
-                        ds = command.ExecuteScalar().ToString();
-                        cnn.Close();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ds = ex.Message;
-            }
-            return ds;
-        }
 
         /// <summary>
         /// https://msdn.microsoft.com/en-us/library/ms131092.aspx
@@ -266,25 +209,25 @@ namespace SqlClrCustomSendMail
         /// <param name="input"></param>
         /// <param name="html"></param>
         /// <returns></returns>
-        public static SqlDbType DetermineSqlDbType(string input, ref string html)
+        private static SqlDbType DetermineSqlDbType(string input, ref string html)
         {
-            SqlDbType retValue = SqlDbType.NVarChar;
+            var retValue = SqlDbType.NVarChar;
             try
             {
 
-                if (Regex.IsMatch(input.ToLower(), "nvarchar"))  //test it
+                if (Regex.IsMatch(input.ToLower(), "nvarchar"))  // test it
                     retValue = SqlDbType.NVarChar;
-                else if (Regex.IsMatch(input.ToLower(), "int"))  //test it 
+                else if (Regex.IsMatch(input.ToLower(), "int"))  // test it 
                     retValue = SqlDbType.Int;
                 else if (Regex.IsMatch(input.ToLower(), "char"))
                     retValue = SqlDbType.Char;
-                else if (Regex.IsMatch(input.ToLower(), "decimal")) //test it 
+                else if (Regex.IsMatch(input.ToLower(), "decimal")) // test it 
                     retValue = SqlDbType.Decimal;
                 else if (Regex.IsMatch(input.ToLower(), "datetime")) // test it
                     retValue = SqlDbType.DateTime;
                 else if (Regex.IsMatch(input.ToLower(), "date"))
                     retValue = SqlDbType.Date;
-                else if (Regex.IsMatch(input.ToLower(), "bit")) //test it
+                else if (Regex.IsMatch(input.ToLower(), "bit")) // test it
                     retValue = SqlDbType.Bit;
                 else if (Regex.IsMatch(input.ToLower(), "bigint")) // test it
                     retValue = SqlDbType.BigInt;
@@ -300,7 +243,7 @@ namespace SqlClrCustomSendMail
                     retValue = SqlDbType.Image;
                 else if (Regex.IsMatch(input.ToLower(), "money"))
                     retValue = SqlDbType.Money;
-                else if (Regex.IsMatch(input.ToLower(), "nchar")) //test it
+                else if (Regex.IsMatch(input.ToLower(), "nchar")) // test it
                     retValue = SqlDbType.NChar;
                 else if (Regex.IsMatch(input.ToLower(), "ntext"))
                     retValue = SqlDbType.NText;
@@ -308,7 +251,7 @@ namespace SqlClrCustomSendMail
                     retValue = SqlDbType.Real;
                 else if (Regex.IsMatch(input.ToLower(), "smalldatetime"))
                     retValue = SqlDbType.SmallDateTime;
-                else if (Regex.IsMatch(input.ToLower(), "smallint")) //test it
+                else if (Regex.IsMatch(input.ToLower(), "smallint")) // test it
                     retValue = SqlDbType.SmallInt;
                 else if (Regex.IsMatch(input.ToLower(), "smallmoney"))
                     retValue = SqlDbType.SmallMoney;
@@ -344,7 +287,7 @@ namespace SqlClrCustomSendMail
             return retValue;
         }
 
-        public static int DeterminSize(string size, ref byte scale)
+        private static int DeterminSize(string size, ref byte scale)
         {
             int retValue = 0;
             string[] splitter = size.Split(',');
@@ -354,12 +297,14 @@ namespace SqlClrCustomSendMail
                 if (refer)
                     retValue = outValue;
             }
+
             if (splitter.Length == 2)
             {
                 var res = byte.TryParse(splitter[1], out var ref1);
                 if (res)
                     scale = ref1;
             }
+
             return retValue;
         }
 
@@ -368,7 +313,7 @@ namespace SqlClrCustomSendMail
             SqlParameter[] sp = null;
             try
             {
-                var splitter = Regex.Replace(value, "\r\n", "", RegexOptions.IgnoreCase).Split(',');
+                var splitter = Regex.Replace(value, "\r\n", string.Empty, RegexOptions.IgnoreCase).Split(',');
                 var pureString = new Dictionary<int, string>();
                 for (var i = 0; i < splitter.Length; i++)
                 {
@@ -377,6 +322,7 @@ namespace SqlClrCustomSendMail
                         pureString[i - 1] += "," + splitter[i];
                         continue;
                     }
+
                     pureString.Add(i, splitter[i].Trim());
                 }
 
@@ -391,7 +337,7 @@ namespace SqlClrCustomSendMail
                         s1.SqlDbType = DetermineSqlDbType(tester, ref html);
                         if (tester.Contains("("))
                         {
-                            var pomValue = Regex.Replace(tester, " ", "", RegexOptions.IgnoreCase);
+                            var pomValue = Regex.Replace(tester, " ", string.Empty, RegexOptions.IgnoreCase);
                             var size = pomValue.Substring(pomValue.IndexOf("(", StringComparison.Ordinal) + 1, pomValue.IndexOf(")", StringComparison.Ordinal) - pomValue.IndexOf("(", StringComparison.Ordinal) - 1);
                             byte scale = 0;
                             var sizeTester = DeterminSize(size, ref scale);
@@ -401,9 +347,11 @@ namespace SqlClrCustomSendMail
                                 s1.Scale = scale;
 
                         }
+
                         DetermineValue(valueSpliiter[1], ref s1);
 
                     }
+
                     if (sp == null)
                         sp = new SqlParameter[pureString.Values.Count];
                     sp[counter] = s1;
@@ -419,6 +367,7 @@ namespace SqlClrCustomSendMail
                 sp = null;
                 html += ex.Message;
             }
+
             return sp;
 
         }
@@ -463,32 +412,29 @@ namespace SqlClrCustomSendMail
                 if (succ)
                     s1.Value = j;
             }
-
             else if (s1.SqlDbType == SqlDbType.Date)
             {
-                var valueString = Regex.Replace(valueSplitter, "'", "", RegexOptions.IgnoreCase).Trim();
+                var valueString = Regex.Replace(valueSplitter, "'", string.Empty, RegexOptions.IgnoreCase).Trim();
                 s1.Value = DateTime.ParseExact(valueString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
-
             else if (s1.SqlDbType == SqlDbType.DateTime || s1.SqlDbType == SqlDbType.SmallDateTime)
             {
-                var valueString = Regex.Replace(valueSplitter, "'", "", RegexOptions.IgnoreCase).Trim();
+                var valueString = Regex.Replace(valueSplitter, "'", string.Empty, RegexOptions.IgnoreCase).Trim();
                 s1.Value = DateTime.ParseExact(valueString, "yyyy-MM-dd hh:mm:ss.fff", CultureInfo.InvariantCulture);
             }
             else if (s1.SqlDbType == SqlDbType.UniqueIdentifier)
             {
-                var valueString = Regex.Replace(valueSplitter, "'", "", RegexOptions.IgnoreCase).Trim();
+                var valueString = Regex.Replace(valueSplitter, "'", string.Empty, RegexOptions.IgnoreCase).Trim();
                 s1.Value = new Guid(valueString);
             }
-            else if (s1.SqlDbType == SqlDbType.Bit) // Bit to boolean
+            else if (s1.SqlDbType == SqlDbType.Bit)
             {
-                var valueString = Regex.Replace(valueSplitter, "'", "", RegexOptions.IgnoreCase).Trim();
+// Bit to boolean
+                var valueString = Regex.Replace(valueSplitter, "'", string.Empty, RegexOptions.IgnoreCase).Trim();
                 var succ = bool.TryParse(valueString, out var result);
                 if (succ)
                     s1.Value = result;
-
             }
-
             else
             {
                 var valueString = valueSplitter.Trim();
@@ -505,7 +451,6 @@ namespace SqlClrCustomSendMail
         }
 
         // Method to Execute query
-
 
 
 

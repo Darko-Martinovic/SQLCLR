@@ -1,6 +1,7 @@
 using System;
 using System.Security.Cryptography;
 
+// ReSharper disable once CheckNamespace
 namespace SqlClrCustomSendMail
 {
     static class EncryptSupport
@@ -8,7 +9,7 @@ namespace SqlClrCustomSendMail
         public sealed class Simple3Des
         {
 
-            private TripleDESCryptoServiceProvider _tripleDes = new TripleDESCryptoServiceProvider();
+            private readonly TripleDESCryptoServiceProvider _tripleDes = new TripleDESCryptoServiceProvider();
             public Simple3Des(string key)
             {
                 _tripleDes.Key = TruncateHash(key, _tripleDes.KeySize / 8);
@@ -19,12 +20,12 @@ namespace SqlClrCustomSendMail
             {
 
 
-                byte[] encryptedBytes = Convert.FromBase64String(encryptedtext);
+                var encryptedBytes = Convert.FromBase64String(encryptedtext);
 
 
-                System.IO.MemoryStream ms = new System.IO.MemoryStream();
+                var ms = new System.IO.MemoryStream();
 
-                CryptoStream decStream = new CryptoStream(ms, _tripleDes.CreateDecryptor(), System.Security.Cryptography.CryptoStreamMode.Write);
+                var decStream = new CryptoStream(ms, _tripleDes.CreateDecryptor(), CryptoStreamMode.Write);
 
 
                 decStream.Write(encryptedBytes, 0, encryptedBytes.Length);
@@ -39,11 +40,11 @@ namespace SqlClrCustomSendMail
             {
 
 
-                byte[] plaintextBytes = System.Text.Encoding.Unicode.GetBytes(plaintext);
+                var plaintextBytes = System.Text.Encoding.Unicode.GetBytes(plaintext);
 
 
-                System.IO.MemoryStream ms = new System.IO.MemoryStream();
-                CryptoStream encStream = new CryptoStream(ms, _tripleDes.CreateEncryptor(), System.Security.Cryptography.CryptoStreamMode.Write);
+                var ms = new System.IO.MemoryStream();
+                var encStream = new CryptoStream(ms, _tripleDes.CreateEncryptor(), CryptoStreamMode.Write);
 
 
                 encStream.Write(plaintextBytes, 0, plaintextBytes.Length);
@@ -60,8 +61,8 @@ namespace SqlClrCustomSendMail
                 var sha1 = new SHA1CryptoServiceProvider();
 
 
-                byte[] keyBytes = System.Text.Encoding.Unicode.GetBytes(key);
-                byte[] hash = sha1.ComputeHash(keyBytes);
+                var keyBytes = System.Text.Encoding.Unicode.GetBytes(key);
+                var hash = sha1.ComputeHash(keyBytes);
 
 
                 Array.Resize(ref hash, length);

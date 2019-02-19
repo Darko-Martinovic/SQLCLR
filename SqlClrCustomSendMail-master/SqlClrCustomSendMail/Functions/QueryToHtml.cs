@@ -4,7 +4,9 @@ using Microsoft.SqlServer.Server;
 using SqlClrCustomSendMail;
 using System.Data.SqlClient;
 using System.Collections.Generic;
+// ReSharper disable RedundantAssignment
 
+// ReSharper disable once CheckNamespace
 public partial class UserDefinedFunctions
 {
 
@@ -17,12 +19,18 @@ public partial class UserDefinedFunctions
     public static SqlString QueryToHtml
         (
         SqlString query, //query we passed
-        [SqlFacet(IsNullable = true, MaxSize = 4000)]SqlString Params,
-        [SqlFacet(IsNullable = true, MaxSize = 200)]SqlString caption, //caption 
-        [SqlFacet(IsNullable = true, MaxSize = 1000)]SqlString footer, //footer 
-        [SqlFacet(IsNullable = true, MaxSize = 4)]SqlInt16 rm, //rotate mode
-        [SqlFacet(IsNullable = true, MaxSize = 4)]SqlInt16 rco, //rotate column ordinal
-        [SqlFacet(IsNullable = true, MaxSize = 4000)]SqlString style
+        [SqlFacet(IsNullable = true, MaxSize = 4000)]
+        SqlString Params,
+        [SqlFacet(IsNullable = true, MaxSize = 200)]
+        SqlString caption, //caption 
+        [SqlFacet(IsNullable = true, MaxSize = 1000)]
+        SqlString footer, //footer 
+        [SqlFacet(IsNullable = true, MaxSize = 4)]
+        SqlInt16 rm, //rotate mode
+        [SqlFacet(IsNullable = true, MaxSize = 4)]
+        SqlInt16 rco, //rotate column ordinal
+        [SqlFacet(IsNullable = true, MaxSize = 4000)]
+        SqlString style
         )
     {
 
@@ -42,16 +50,16 @@ public partial class UserDefinedFunctions
 
 
         //Dictionary<int, DataTable> ds = DataAccess.GetData(queryValue, mySp, listOfParams, ref html);
-        DataAccess da = null;
+        DataAccess da;
         var splitQueries = queryValue.Split(';');
-        List<object[]> ds = null;
-        int counter = 0;
+        List<object[]> ds;
+        var counter = 0;
 
         foreach (var singleQuery in splitQueries)
         {
             if (singleQuery.Trim() == "")
                 continue;
-            string queryToSend = singleQuery;
+            var queryToSend = singleQuery;
             if (singleQuery.ToUpper().StartsWith("EXEC"))
             {
                 mySp = true;
@@ -77,9 +85,11 @@ public partial class UserDefinedFunctions
                 else
                 {
                     if (myRco == -1)
-                        html += RenderArray.MakeTableRotateKeyValue(ds, caption.Value, footer.Value, style.Value, da.FieldCount, da.RowCount, counter, splitQueries.Length - 1);
+                        html += RenderArray.MakeTableRotateKeyValue(ds, caption.Value, footer.Value, style.Value,
+                            da.FieldCount, da.RowCount, counter, splitQueries.Length - 1);
                     else
-                        html += RenderArray.MakeTableRotate(ds, caption.Value, footer.Value, style.Value, da.FieldCount, da.RowCount, myRco, counter, splitQueries.Length - 1);
+                        html += RenderArray.MakeTableRotate(ds, caption.Value, footer.Value, style.Value, da.FieldCount,
+                            da.RowCount, myRco, counter, splitQueries.Length - 1);
                 }
             }
 
@@ -119,8 +129,9 @@ public partial class UserDefinedFunctions
     }
 
 
-    public enum RotateMode
+    private enum RotateMode
     {
+        // ReSharper disable once UnusedMember.Local
         None = 0,
         Auto = 1,
         Force = 2

@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Net.Mail;
-using System.Text;
 
+// ReSharper disable once CheckNamespace
 namespace SqlClrCustomSendMail
 {
     public static class MailMessageExtension
@@ -15,7 +13,7 @@ Subject  : '{mm.Subject.Trim()}'";
         }
         public static string Recipiens(this MailMessage mm)
         {
-            string retValue = string.Empty;
+            var retValue = string.Empty;
             foreach (var eml in mm.To)
             {
                 retValue += eml.Address + ";";

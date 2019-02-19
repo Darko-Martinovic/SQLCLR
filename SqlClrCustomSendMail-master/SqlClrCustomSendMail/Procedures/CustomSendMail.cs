@@ -1,5 +1,7 @@
 using System;
+using System.Data.SqlClient;
 using System.Data.SqlTypes;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Security;
@@ -7,33 +9,41 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.SqlServer.Server;
 using SqlClrCustomSendMail;
-using System.IO;
-using System.Data.SqlClient;
+// ReSharper disable RedundantAssignment
 
+// ReSharper disable once PartialTypeWithSinglePart
+// ReSharper disable once CheckNamespace
 public partial class StoredProcedures
 {
+    [SqlProcedure]
 
-    
-    [Microsoft.SqlServer.Server.SqlProcedure]
-    public static void CLRSendMail([SqlFacet( MaxSize = 20)] SqlString profileName,
-          SqlString mailTo,
-          [SqlFacet(IsNullable = true, MaxSize = 255)]SqlString mailSubject,
-          SqlString mailBody,
-          [SqlFacet(IsNullable = true, MaxSize = 500)]SqlString fromAddress,
-          [SqlFacet(IsNullable = true, MaxSize = 400)]SqlString displayName,
-          [SqlFacet(IsNullable = true, MaxSize = 4000)]SqlString mailCc,
-          [SqlFacet(IsNullable = true, MaxSize = 4000)]SqlString blindCopyRec,
-          [SqlFacet(IsNullable = true, MaxSize = 4000)]SqlString replyAddress,
-          [SqlFacet(IsNullable = true, MaxSize = 4000)]SqlString fileAttachments,
-          [SqlFacet(IsNullable = true)]SqlBoolean requestReadReceipt,
-          [SqlFacet(IsNullable = true)]SqlInt16 deliveryNotification,
-          [SqlFacet(IsNullable = true)]SqlInt16 sensitivity,
-          [SqlFacet(IsNullable = true)]SqlInt16 mailPriorty,
-          [SqlFacet(IsNullable = true)]SqlBoolean bodyHtml,
-          [SqlFacet(IsNullable = true, MaxSize = 20)]SqlString configName)
+// ReSharper disable once UnusedMember.Global
+    // ReSharper disable once InconsistentNaming
+    public static void CLRSendMail([SqlFacet(MaxSize = 20)] SqlString profileName,
+        SqlString mailTo,
+        [SqlFacet(IsNullable = true, MaxSize = 255)]
+        SqlString mailSubject,
+        SqlString mailBody,
+        [SqlFacet(IsNullable = true, MaxSize = 500)]
+        SqlString fromAddress,
+        [SqlFacet(IsNullable = true, MaxSize = 400)]
+        SqlString displayName,
+        [SqlFacet(IsNullable = true, MaxSize = 4000)]
+        SqlString mailCc,
+        [SqlFacet(IsNullable = true, MaxSize = 4000)]
+        SqlString blindCopyRec,
+        [SqlFacet(IsNullable = true, MaxSize = 4000)]
+        SqlString replyAddress,
+        [SqlFacet(IsNullable = true, MaxSize = 4000)]
+        SqlString fileAttachments,
+        [SqlFacet(IsNullable = true)] SqlBoolean requestReadReceipt,
+        [SqlFacet(IsNullable = true)] SqlInt16 deliveryNotification,
+        [SqlFacet(IsNullable = true)] SqlInt16 sensitivity,
+        [SqlFacet(IsNullable = true)] SqlInt16 mailPriorty,
+        [SqlFacet(IsNullable = true)] SqlBoolean bodyHtml,
+        [SqlFacet(IsNullable = true, MaxSize = 20)]
+        SqlString configName)
     {
-
-
         SysProfile mailClrClient;
         MailMessage eMail = null;
         SysConfig sc;
@@ -41,25 +51,27 @@ public partial class StoredProcedures
         var pipe = SqlContext.Pipe;
         try
         {
-
-            //Check parameters
+            // Check parameters
             if (profileName.IsNull || profileName.Value.Trim() == string.Empty)
             {
                 pipe?.Send("Parameter @profileName must be specified !");
                 return;
             }
+
             if (mailTo.IsNull || mailTo.Value.Trim() == string.Empty)
             {
                 pipe?.Send("Parametar @mailTo must be specified !");
                 return;
             }
+
             if (mailBody.IsNull || mailBody.Value.Trim() == string.Empty)
             {
                 pipe?.Send("Parametar @mailBody must be specified !");
                 return;
             }
-            var error = "";
-            
+
+            var error = string.Empty;
+
             if (configName.IsNull || configName.Value.Trim() == string.Empty)
                 sc = new SysConfig();
             else
@@ -67,11 +79,12 @@ public partial class StoredProcedures
                 sc = GetConfig(configName.Value, ref error);
                 if (sc == null)
                 {
-                    LogEntry.LogItem($"Configuration is not defined !",  "Warning",
+                    LogEntry.LogItem($"Configuration is not defined !", "Warning",
                         $"There is an error when trying to determine config : {error}",
                         $"Config name : {configName.Value}");
-                    pipe?.Send($"Configuration is not defined !{error}" != "" ? $"There is an error when trying to determine config : {error}"
-                        : "");
+                    pipe?.Send($"Configuration is not defined !{error}" != string.Empty
+                        ? $"There is an error when trying to determine config : {error}"
+                        : string.Empty);
                     return;
                 }
             }
@@ -79,111 +92,118 @@ public partial class StoredProcedures
             mailClrClient = GetClient(profileName.Value, ref error);
             if (mailClrClient == null)
             {
-                LogEntry.LogItem("Profile is not defined !",  "Warning",
+                LogEntry.LogItem("Profile is not defined !", "Warning",
                     $"There is an error when trying to determine profile : {error}",
                     $"Profile name : {profileName.Value}");
-                pipe?.Send($"Profile is not defined !{error}" != "" ? $"There is an error when trying to determine profile : {error}"
-                    : "");
+                pipe?.Send($"Profile is not defined !{error}" != string.Empty
+                    ? $"There is an error when trying to determine profile : {error}"
+                    : string.Empty);
                 return;
             }
 
 
             eMail = ConstructEmailMessage(
-                        sc,
-                        mailTo.Value,
-                        mailSubject.IsNull ? "SQLCLR Server Message" : mailSubject.Value,
-                        mailBody.IsNull ? string.Empty : mailBody.Value,
-                        DetermineFromAddress(fromAddress.IsNull ? string.Empty : fromAddress.Value,
-                            displayName.IsNull ? string.Empty : displayName.Value, mailClrClient),
-                        mailCc.IsNull ? string.Empty : (string)mailCc.Value,
-                        blindCopyRec.IsNull ? string.Empty : (string)blindCopyRec.Value,
-                        replyAddress.IsNull ? string.Empty : (string)replyAddress.Value,
-                        fileAttachments.IsNull ? string.Empty : (string)fileAttachments.Value,
-                        ref validAttachment,
-                        !requestReadReceipt.IsNull && (bool)requestReadReceipt.Value,
-                        sensitivity.IsNull ? -1 : (int)sensitivity.Value,
-                        deliveryNotification.IsNull
-                            ? DeliveryNotificationOptions.None
-                            : (DeliveryNotificationOptions) Enum.Parse(typeof(DeliveryNotificationOptions),
-                                deliveryNotification.Value.ToString()),
-                        mailPriorty.IsNull ? MailPriority.Normal : (MailPriority)Enum.Parse(typeof(MailPriority), mailPriorty.Value.ToString()),
-                        !bodyHtml.IsNull && (bool)bodyHtml.Value);
-
+                sc,
+                mailTo.Value,
+                mailSubject.IsNull ? "SQLCLR Server Message" : mailSubject.Value,
+                mailBody.IsNull ? string.Empty : mailBody.Value,
+                DetermineFromAddress(fromAddress.IsNull ? string.Empty : fromAddress.Value,
+                    displayName.IsNull ? string.Empty : displayName.Value, mailClrClient),
+                mailCc.IsNull ? string.Empty : mailCc.Value,
+                blindCopyRec.IsNull ? string.Empty : blindCopyRec.Value,
+                replyAddress.IsNull ? string.Empty : replyAddress.Value,
+                fileAttachments.IsNull ? string.Empty : fileAttachments.Value,
+                ref validAttachment,
+                !requestReadReceipt.IsNull && requestReadReceipt.Value,
+                sensitivity.IsNull ? -1 : sensitivity.Value,
+                deliveryNotification.IsNull
+                    ? DeliveryNotificationOptions.None
+                    : (DeliveryNotificationOptions) Enum.Parse(typeof(DeliveryNotificationOptions),
+                        deliveryNotification.Value.ToString()),
+                mailPriorty.IsNull
+                    ? MailPriority.Normal
+                    : (MailPriority) Enum.Parse(typeof(MailPriority), mailPriorty.Value.ToString()),
+                !bodyHtml.IsNull && bodyHtml.Value);
 
 
             if (mailClrClient.Client.EnableSsl)
+                // ReSharper disable once RedundantLambdaParameterType
                 ServicePointManager.ServerCertificateValidationCallback = (object s, X509Certificate certificate,
                     X509Chain chain, SslPolicyErrors sslPolicyErrors) => true;
 
 
             if (sc.SendAsync)
             {
-                //mailClrClient.Client.SendCompleted += new
-                //SendCompletedEventHandler(SendCompletedCallback);
+                // mailClrClient.Client.SendCompleted += new
+                // SendCompletedEventHandler(SendCompletedCallback);
                 // The userState can be any object that allows your callback 
                 // method to identify this send operation.
                 // For this example, the userToken is a string constant.
-                //string userState = "SQLCLR does not fire this event";
-                //mailClrClient.Client.SendAsync(eMail, userState);
-
+                // string userState = "SQLCLR does not fire this event";
+                // mailClrClient.Client.SendAsync(eMail, userState);
                 mailClrClient.Client.SendAsync(eMail, null);
             }
             else
-            { 
+            {
                 mailClrClient.Client.Send(eMail);
             }
+
             if (sc.NoPiping == false)
                 pipe.Send("Sent successfully!");
 
             if (sc.LoggingLevel == ELoggingLevel.Maximum)
-                LogEntry.LogItem("SQLCLR sent e-mail", "Information", "E-mail successfully sent!", eMail.HeaderInformation());
+                LogEntry.LogItem("SQLCLR sent e-mail", "Information", "E-mail successfully sent!",
+                    eMail.HeaderInformation());
 
             if (sc.SaveEmails)
-                EmailTracker.SaveEmail(eMail, mailClrClient.Name, sc.Name, validAttachment,sc.SaveAttachments);
+                EmailTracker.SaveEmail(eMail, mailClrClient.Name, sc.Name, validAttachment, sc.SaveAttachments);
 
-            //Dispose
+            // Dispose
             if (sc.SendAsync == false)
                 eMail.Dispose();
         }
         catch (Exception ex)
         {
-            //if (sc.noPiping == false)
-                pipe.Send($"There is an error in sending e-mail : {ex.Message}\r\n{ex.InnerException}" == null ? "" : ex.InnerException.Message);
+            // if (sc.noPiping == false)
+            pipe.Send($"There is an error in sending e-mail : {ex.Message}\r\n{ex.InnerException}" == null
+                ? string.Empty
+                : ex.InnerException.Message);
 
-            LogEntry.LogItem("SQLCLR sent e-mail",  "Error", $"E-mail was not sent!", ex.Message + "\r\n" + ex.InnerException == null ? "" : ex.InnerException.Message);
+            LogEntry.LogItem("SQLCLR sent e-mail", "Error", $"E-mail was not sent!",
+                ex.Message + "\r\n" + ex.InnerException == null ? string.Empty : ex.InnerException.Message);
         }
         finally
         {
+            // ReSharper disable once RedundantCheckBeforeAssignment
             if (eMail != null)
+                // ReSharper disable once RedundantAssignment
                 eMail = null;
 
             sc = null;
             mailClrClient = null;
         }
+
         GC.Collect();
         GC.WaitForPendingFinalizers();
-
-
-
     }
 
-    //static bool mailSent = false;
-    //private static void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
-    //{
-    //    // Get the unique identifier for this asynchronous operation.
-    //    String token = (string)e.UserState;
+    // static bool mailSent = false;
+    // private static void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
+    // {
+    // // Get the unique identifier for this asynchronous operation.
+    // String token = (string)e.UserState;
 
-    //    if (e.Cancelled)
-    //    {
-    //    }
-    //    if (e.Error != null)
-    //    {
-    //    }
-    //    else
-    //    {
-    //    }
-    //    mailSent = true;
-    //}
+    // if (e.Cancelled)
+    // {
+    // }
+    // if (e.Error != null)
+    // {
+    // }
+    // else
+    // {
+    // }
+    // mailSent = true;
+    // }
     private static MailAddress DetermineFromAddress(string fromAddress, string displayName, SysProfile sp)
     {
         MailAddress retValue;
@@ -229,7 +249,7 @@ public partial class StoredProcedures
             {
                 if (eml.Trim().Length > 0)
                 {
-                    eMail.ReplyToList.Add(eml.Trim());
+                    // eMail.ReplyToList.Add(eml.Trim());
                 }
             }
         }
@@ -257,26 +277,29 @@ public partial class StoredProcedures
                     eMail.Bcc.Add(eml.Trim());
             }
         }
+
         if (fileAttachments.Trim() != string.Empty)
         {
-            //message.Attachments.Add(new Attachment(PathToAttachment));
+            // message.Attachments.Add(new Attachment(PathToAttachment));
             foreach (string eml in fileAttachments.Split(';'))
             {
                 if (eml.Trim().Length > 0)
                 {
-                    string ext = Path.GetExtension(eml).Replace(".", "");
+                    string ext = Path.GetExtension(eml).Replace(".", string.Empty);
                     if (sc.ProhibitedExtension.Contains(ext))
                     {
                         LogEntry.LogItem("Prohibit extension!",  "Warning",
                             $"Attachment : {eml} has prohibit extension!", eMail.HeaderInformation());
                         continue;
                     }
+
                     if (File.Exists(eml) == false)
                     {
                         LogEntry.LogItem("File does not exists",  "Warning",
                             $"Attachment :{eml} does not exists on file system!", eMail.HeaderInformation());
                         continue;
                     }
+
                     if (sc.MaxFileSize < new FileInfo(eml).Length)
                     {
                         LogEntry.LogItem("Max.file size limit!",  "Warning",
@@ -294,12 +317,12 @@ public partial class StoredProcedures
         }
 
         if (requestReadReceipt)
-            eMail.Headers.Add("Disposition-Notification-To",replyAddress == string.Empty ? eMail.From.Address : replyAddress);
+            eMail.Headers.Add("Disposition-Notification-To", replyAddress == string.Empty ? eMail.From.Address : replyAddress);
 
 
         if (sensitivity >= 0 && sensitivity <= 2)
         {
-            //sensitivity = "Personal" / "Private" / "Company-Confidential"
+            // sensitivity = "Personal" / "Private" / "Company-Confidential"
             if (sensitivity == 0)
                 eMail.Headers.Add("Sensitivity", "Personal");
             else if (sensitivity == 1)
@@ -321,7 +344,7 @@ public partial class StoredProcedures
         return eMail;
     }
 
-    private static SysConfig GetConfig(string name,ref string error)
+    private static SysConfig GetConfig(string name, ref string error)
     {
         var pName = new SqlParameter("name", name)
         {
@@ -339,7 +362,8 @@ public partial class StoredProcedures
     {
         SysProfile p;
         var wrapper = new EncryptSupport.Simple3Des(SecretWord);
-        //Built in profile called ssl
+
+// Built in profile called ssl
         if (name == "ssl")
         {
             p = new SysProfile
@@ -355,9 +379,11 @@ public partial class StoredProcedures
                         wrapper.DecryptData("ovkrtZ/="))
                 }
             };
-            // encrypted credential 
+
+// encrypted credential 
         }
-        //Built in profile called simple
+
+// Built in profile called simple
         else if (name == "simple")
         {
             p = new SysProfile
@@ -371,12 +397,13 @@ public partial class StoredProcedures
                     EnableSsl = false
                 }
             };
-            // encrypted credential 
-            //p.client.Credentials = new NetworkCredential(wrapper.DecryptData("El+=="), wrapper.DecryptData("=="));
+
+// encrypted credential 
+            // p.client.Credentials = new NetworkCredential(wrapper.DecryptData("El+=="), wrapper.DecryptData("=="));
         }
         else
         {
-            //determine profile by quering the database
+            // determine profile by quering the database
             var listOfParams = new SqlParameter[1];
             var pName = new SqlParameter("name", name)
             {
@@ -384,8 +411,9 @@ public partial class StoredProcedures
                 SqlDbType = System.Data.SqlDbType.Char
             };
             listOfParams[0] = pName;
-            p = DataAccess.GetProfile(listOfParams, wrapper,ref error);
+            p = DataAccess.GetProfile(listOfParams, wrapper, ref error);
         }
+
         return p;
     }
 

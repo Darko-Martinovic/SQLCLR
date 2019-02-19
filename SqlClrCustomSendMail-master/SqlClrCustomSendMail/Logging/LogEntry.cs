@@ -1,5 +1,6 @@
 using System.Data.SqlClient;
 
+// ReSharper disable once CheckNamespace
 namespace SqlClrCustomSendMail
 {
     public static class LogEntry
@@ -41,12 +42,9 @@ namespace SqlClrCustomSendMail
                         conn.Open();
                         comm.ExecuteNonQuery();
                     }
-                    catch  (SqlException e)
+                    catch  (SqlException)
                     {
                         retvalue = false;
-                        //TO-DO LOG ERROR
-                        var error = e.Message;
-                        //TO-DO
                     }
                 }
             }

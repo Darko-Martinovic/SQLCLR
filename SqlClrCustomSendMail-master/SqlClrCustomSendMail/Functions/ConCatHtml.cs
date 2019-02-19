@@ -2,7 +2,10 @@ using System;
 using System.Data.SqlTypes;
 using System.Xml.Linq;
 using Microsoft.SqlServer.Server;
+// ReSharper disable RedundantAssignment
 
+// ReSharper disable once UnusedMember.Global
+// ReSharper disable once CheckNamespace
 public partial class UserDefinedFunctions
 {
 
@@ -16,17 +19,17 @@ public partial class UserDefinedFunctions
         string retValue = string.Empty;
         try
         {
-            string mainHtml = mHtml.Value;
-            string addOnHtml = sHtml.Value;
-            string styleAddOnName = DetermineStyleName(ExtractStyle(addOnHtml));
+            var mainHtml = mHtml.Value;
+            var addOnHtml = sHtml.Value;
+            var styleAddOnName = DetermineStyleName(ExtractStyle(addOnHtml));
             var doc = XDocument.Parse(mainHtml);
             if (styleAddOnName.Equals(string.Empty) == false)
             {
                 if (mainHtml.Contains(styleAddOnName) == false)
                 {
-                    string mainStyle = ExtractStyle(mainHtml);
+                    var mainStyle = ExtractStyle(mainHtml);
                     var style = doc.Element("html")?.Element("head")?.Element("style");
-                    string addonStyle = ExtractStyle(addOnHtml);
+                    var addonStyle = ExtractStyle(addOnHtml);
                     style?.Add(addonStyle);
                 }
             }
@@ -39,7 +42,9 @@ public partial class UserDefinedFunctions
                 doc = null;
             }
 
+            // ReSharper disable once RedundantAssignment
             body = null;
+            // ReSharper disable once RedundantAssignment
             addOn = null;
             mainHtml = null;
             addOnHtml = null;
@@ -77,9 +82,9 @@ public partial class UserDefinedFunctions
     }
 
 
-    public static string ExtractStyle(string tester)
+    private static string ExtractStyle(string tester)
     {
-        string result = "";
+        var result = "";
         var doc = XDocument.Parse(tester);
         var style = doc.Element("html")?.Element("head")?.Element("style");
         if (style != null)
@@ -92,20 +97,22 @@ public partial class UserDefinedFunctions
         return result;
 
     }
-    public static string DetermineStyleName(string style)
+
+    private static string DetermineStyleName(string style)
     {
-        string styleName = "unknowen";
+        var styleName = "unknowen";
 
         if (style.Contains("table"))
         {
-            var tester = style.Split(new string[] { "table" }, StringSplitOptions.RemoveEmptyEntries);
+            var tester = style.Split(new[] { "table" }, StringSplitOptions.RemoveEmptyEntries);
             var valueString = tester[0];
             styleName = valueString.Substring(valueString.IndexOf(".", StringComparison.Ordinal), valueString.Length - valueString.IndexOf(".", StringComparison.Ordinal)).Trim();
         }
         return styleName;
 
     }
-    public static XElement ExtractBodyElement(string tester)
+
+    private static XElement ExtractBodyElement(string tester)
     {
         var doc = XDocument.Parse(tester);
         return doc.Element("html")?.Element("body");

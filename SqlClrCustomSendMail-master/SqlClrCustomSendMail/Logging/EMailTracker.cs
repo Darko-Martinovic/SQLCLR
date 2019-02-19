@@ -2,10 +2,12 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Net.Mail;
+// ReSharper disable RedundantAssignment
 
+// ReSharper disable once CheckNamespace
 namespace SqlClrCustomSendMail
 {
-    public class EmailTracker
+    public static class EmailTracker
     {
         public static bool SaveEmail(
                                 MailMessage mm, 
@@ -163,13 +165,10 @@ OUTPUT INSERTED.mailitem_id INTO @MyTableVar
                         if (conn.State == ConnectionState.Open)
                             conn.Close();
                     }
-                    catch (SqlException e)
+                    catch (SqlException)
                     {
                         comm.Transaction.Rollback();
                         retValue = false;
-                        //TO-DO LOG
-                        var error = e.Message;
-                        //TO-DO
                     }
                 }
             }
