@@ -274,3 +274,7 @@ The scripts record a hash of the sources they were built from, and a test fails 
 | `Examples/Examples.sql` | Examples to run in SSMS |
 | `tools/SetupScript/` | Generates the setup scripts (.NET 10) |
 | `tests/SqlClr.Tests/` | xUnit tests (.NET 10) |
+
+## License
+
+[MIT](LICENSE)
