@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Writes Setup/SetupHtml.sql and Setup/SetupSendMail.sql from their templates and the
+    assemblies: run it in Release, as the README describes under Building and testing
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Build the assemblies first, in the same configuration; nothing of them is referenced -->
+    <ProjectReference Include="..\..\SqlClrHtml\SqlClrHtml.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
+    <ProjectReference Include="..\..\SqlClrSendMail\SqlClrSendMail.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyMetadata Include="RepositoryRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../..'))" />
+    <AssemblyMetadata Include="Configuration" Value="$(Configuration)" />
+  </ItemGroup>
+
+</Project>

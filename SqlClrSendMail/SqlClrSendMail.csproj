@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    CLRSendMail: an UNSAFE assembly, since .NET Framework's SmtpClient needs full trust for any
+    port but 25, and it reads the files it attaches. SQL Server on Linux runs SAFE assemblies
+    only, so this one needs SQL Server on Windows. SQL Server runs CLR assemblies on .NET
+    Framework 4.x only, up to SQL Server 2025.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>SimpleTalk.SQLCLR.SendMail</AssemblyName>
+    <RootNamespace>SimpleTalk.SqlClr.SendMail</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Version>2.0.0</Version>
+    <Company>Darko Martinovic</Company>
+    <Product>SQLCLR</Product>
+    <Description>Sending e-mail from SQL Server</Description>
+    <Copyright>Darko Martinovic</Copyright>
+    <!-- The setup script carries the assembly: no debug directory with a local path in it -->
+    <DebugType>none</DebugType>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Lets dotnet build compile for .NET Framework on any OS -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
