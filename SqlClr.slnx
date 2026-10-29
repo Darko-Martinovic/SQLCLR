@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/SqlClr.Tests/SqlClr.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/SetupScript/SetupScript.csproj" />
+  </Folder>
+  <Project Path="SqlClrHtml/SqlClrHtml.csproj" />
+  <Project Path="SqlClrSendMail/SqlClrSendMail.csproj" />
+</Solution>

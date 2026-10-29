@@ -1,0 +1,26 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    name: SQL Server ${{ matrix.sql-server }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        sql-server: ["2022", "2025"]
+    env:
+      # The tests start this SQL Server for Linux in a container with Testcontainers. The
+      # tests of CLRSendMail need SQL Server on Windows and are skipped here (see the README)
+      MSSQL_IMAGE: mcr.microsoft.com/mssql/server:${{ matrix.sql-server }}-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet build SqlClr.slnx
+      - run: dotnet test --solution SqlClr.slnx --no-build
